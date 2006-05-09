@@ -260,27 +260,32 @@ class Debugger(Pdb):
 def start_interactive_mode(debuggers, descrs):
     """starts an interactive shell so that the user can inspect errors
     """
-    while True:
-        print "Choose a test to debug:"
-        print "\n".join(['\t%s : %s' % (i, descr) for i, descr in enumerate(descrs)])
-        print "Type 'exit' (or ^D) to quit"
-        print
-        try:
-            todebug = raw_input('Enter a test name: ')
-            if todebug.strip().lower() == 'exit':
+    if len(debuggers) == 1:
+        # don't ask for test name if there's only one failure
+        debuggers[0].start()
+    else:
+        while True:
+            testindex = 0
+            print "Choose a test to debug:"
+            print "\n".join(['\t%s : %s' % (i, descr) for i, descr in enumerate(descrs)])
+            print "Type 'exit' (or ^D) to quit"
+            print
+            try:
+                todebug = raw_input('Enter a test name: ')
+                if todebug.strip().lower() == 'exit':
+                    print
+                    break
+                else:
+                    try:
+                        testindex = int(todebug)
+                        debugger = debuggers[testindex]
+                    except (ValueError, IndexError):
+                        print "ERROR: invalid test number %r" % (todebug,)
+                    else:
+                        debugger.start()
+            except (EOFError, KeyboardInterrupt):
                 print
                 break
-            else:
-                try:
-                    testindex = int(todebug)
-                    debugger = debuggers[testindex]
-                except (ValueError, IndexError):
-                    print "ERROR: invalid test number %r" % (todebug,)
-                else:
-                    debugger.start()
-        except (EOFError, KeyboardInterrupt):
-            print
-            break
 
 
 # test utils ##################################################################
@@ -288,11 +293,12 @@ from cStringIO import StringIO
 
 class SkipAwareTestResult(unittest._TextTestResult):
 
-    def __init__(self, stream, descriptions, verbosity):
+    def __init__(self, stream, descriptions, verbosity, exitfirst=False):
         unittest._TextTestResult.__init__(self, stream, descriptions, verbosity)
         self.skipped = []
         self.debuggers = []
         self.descrs = []
+        self.exitfirst = exitfirst
 
     def _create_pdb(self, test_descr):
         self.debuggers.append(Debugger(sys.exc_info()[2]))
@@ -304,10 +310,14 @@ class SkipAwareTestResult(unittest._TextTestResult):
         if exc_type == TestSkipped:
             self.addSkipped(test, exc)
         else:
+            if self.exitfirst:
+                self.shouldStop = True
             unittest._TextTestResult.addError(self, test, err)
         self._create_pdb(self.getDescription(test))
 
     def addFailure(self, test, err):
+        if self.exitfirst:
+            self.shouldStop = True
         unittest._TextTestResult.addFailure(self, test, err)
         self._create_pdb(self.getDescription(test))
 
@@ -331,8 +341,13 @@ class SkipAwareTestResult(unittest._TextTestResult):
 
 class SkipAwareTextTestRunner(unittest.TextTestRunner):
 
+    def __init__(self, verbosity=1, exitfirst=False):
+        unittest.TextTestRunner.__init__(self, verbosity=verbosity)
+        self.exitfirst = exitfirst
+
     def _makeResult(self):
-        return SkipAwareTestResult(self.stream, self.descriptions, self.verbosity)
+        return SkipAwareTestResult(self.stream, self.descriptions,
+                                   self.verbosity, self.exitfirst)
 
 
 class SkipAwareTestProgram(unittest.TestProgram):
@@ -344,6 +359,7 @@ Options:
   -h, --help       Show this message
   -v, --verbose    Verbose output
   -i, --pdb        Enable test failure inspection
+  -x, --exitfirst  Exit on first failure
   -q, --quiet      Minimal output
 
 Examples:
@@ -355,15 +371,18 @@ Examples:
 """
     def parseArgs(self, argv):
         self.pdbmode = False
+        self.exitfirst = False
         import getopt
         try:
-            options, args = getopt.getopt(argv[1:], 'hHviq',
-                                          ['help','verbose','quiet', 'pdb'])
+            options, args = getopt.getopt(argv[1:], 'hHvixq',
+                                          ['help','verbose','quiet', 'pdb', 'exitfirst'])
             for opt, value in options:
                 if opt in ('-h','-H','--help'):
                     self.usageExit()
                 if opt in ('-i', '--pdb'):
                     self.pdbmode = True
+                if opt in ('-x', '--exitfirst'):
+                    self.exitfirst = True
                 if opt in ('-q','--quiet'):
                     self.verbosity = 0
                 if opt in ('-v','--verbose'):
@@ -381,7 +400,8 @@ Examples:
 
 
     def runTests(self):
-        self.testRunner = SkipAwareTextTestRunner(verbosity=self.verbosity)
+        self.testRunner = SkipAwareTextTestRunner(verbosity=self.verbosity,
+                                                  exitfirst=self.exitfirst)
         result = self.testRunner.run(self.test)
         if os.environ.get('PYDEBUG'):
             warn("PYDEBUG usage is deprecated, use -i / --pdb instead", DeprecationWarning)
