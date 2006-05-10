@@ -466,17 +466,17 @@ class TestCase(unittest.TestCase):
         If the two list differ, the first difference is shown in the error
         message
         """
-        l1 = l1[:]
+        _l1 = l1[:]
         for i, value in enumerate(l2):
             try:
-                if l1[0] != value:
-                    self.fail('%r != %r for index %d' % (l1[0], value, i))
-                del l1[0]
+                if _l1[0] != value:
+                    self.fail('%r != %r for index %d' % (_l1[0], value, i))
+                del _l1[0]
             except IndexError:
                 msg = 'l1 has only %d elements, not %s (at least %r missing)'
                 self.fail(msg % (i, len(l2), value))
-        if l1:
-            self.fail('l2 is lacking %r' % l1)
+        if _l1:
+            self.fail('l2 is lacking %r' % _l1)
     assertListEqual = assertListEquals
     
     def assertLinesEquals(self, l1, l2):

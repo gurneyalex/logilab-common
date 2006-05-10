@@ -237,6 +237,7 @@ class _PySqlite2Adapter(DBAPIAdapter):
             return
 
         from mx.DateTime import DateTimeType, strptime
+        from StringIO import StringIO
 
         def adapt_mxdatetime(mxd):
             return mxd.strftime('%F %H:%M:%S')
@@ -249,6 +250,14 @@ class _PySqlite2Adapter(DBAPIAdapter):
         def convert_mxdatetime(ustr):
             return strptime(ustr, '%F %H:%M:%S')
         sqlite.register_converter('timestamp', convert_mxdatetime)
+
+        def adapt_bytea(data):
+            return data.getvalue()
+        sqlite.register_adapter(StringIO, adapt_bytea)
+
+        def convert_bytea(data):
+            return StringIO(data)
+        sqlite.register_converter('bytea', convert_bytea)
 
         def convert_boolean(ustr):
             if ustr.lower() == 'false':
