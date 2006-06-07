@@ -170,9 +170,9 @@ try:
     sorted = sorted
     reversed = reversed
 except NameError:
-    def sorted(l):
+    def sorted(l, cmp=None):
         l2 = list(l)
-        l2.sort()
+        l2.sort(cmp)
         return l2
 
     def reversed(l):

@@ -2,7 +2,8 @@ ChangeLog for logilab.common
 ============================
 
   --
-  * testlib: improved test collections
+    * testlib: improved test collections
+    * compat: added cmp argument to sorted
 	
 2006-05-19  --  0.16.0
     * testlib:
