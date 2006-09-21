@@ -1,3 +1,10 @@
+logilab-common (0.19.0-3) unstable; urgency=medium
+
+  * Remove leftover files from package in Stable (closes: #388322)
+  * Urgency set to medium because it closes an RC bug
+
+ -- Alexandre Fayolle <afayolle@debian.org>  Thu, 21 Sep 2006 16:27:08 +0200
+
 logilab-common (0.19.0-2) unstable; urgency=low
 
   * Uploaded to Debian
