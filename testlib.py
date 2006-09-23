@@ -207,8 +207,8 @@ def find_tests(testdir,
         if not suffix or name.endswith(suffix):
             for prefix in prefixes:
                 if name.startswith(prefix):
-                    if remove_suffix:
-                        name = name.rstrip(suffix)
+                    if remove_suffix and name.endswith(suffix):
+                        name = name[:-len(suffix)]
                     if name not in excludes:
                         tests.append(name)
     tests.sort()
