@@ -152,7 +152,7 @@ def normalize_paragraph(text, line_len=80, indent=''):
             if pos == 0:
                 pos = min(len(indent) + len(text), line_len)
                 pos = pos - len(indent)
-                while text[pos] != ' ':
+                while len(text) > pos and text[pos] != ' ':
                     pos += 1
         lines.append((indent + text[:pos]))
         text = text[pos+1:]

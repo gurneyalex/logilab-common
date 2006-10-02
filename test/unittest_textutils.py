@@ -37,6 +37,16 @@ linnnnnnnnnnnes
 
 and empty lines!''')
 
+    def test_nonregr_unsplitable_word(self):
+        self.assertEquals(ulines(tu.normalize_text('''petit complement :
+
+http://www.plonefr.net/blog/archive/2005/10/30/tester-la-future-infrastructure-i18n
+''', 80)),
+                         '''petit complement :
+
+http://www.plonefr.net/blog/archive/2005/10/30/tester-la-future-infrastructure-i18n''')
+
+
 class NormalizeParagraphTC(TestCase):
 
     def test_known_values(self):
