@@ -18,8 +18,6 @@ Some shell utilities, usefull to write some python scripts instead of shell
 scripts
 """
 
-__revision__ = '$Id: shellutils.py,v 1.6 2005-10-21 13:23:26 syt Exp $'
-
 import os        
 import glob
 import shutil
