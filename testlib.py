@@ -55,7 +55,7 @@ DEFAULT_PREFIXES = ('test', 'regrtest', 'smoketest', 'unittest',
 
 ENABLE_DBC = False
 
-def main(testdir=None):
+def main(testdir=None, exitafter=True):
     """Execute a test suite.
 
     This also parses command-line options and modifies its behaviour
@@ -109,8 +109,10 @@ def main(testdir=None):
     args = [item.rstrip('.py') for item in args]
     exclude = [item.rstrip('.py') for item in exclude]
 
-    tests = find_tests(testdir, args or DEFAULT_PREFIXES, excludes=exclude)
-    sys.path.insert(0, testdir)
+    if testdir is not None:
+        os.chdir(testdir)
+    sys.path.insert(0, '')
+    tests = find_tests('.', args or DEFAULT_PREFIXES, excludes=exclude)
     # Tell tests to be moderately quiet
     test_support.verbose = verbose
     if profile:
@@ -154,7 +156,10 @@ def main(testdir=None):
         stats = stats.load('stones.prof')
         stats.sort_stats('time', 'calls')
         stats.print_stats(30)
-    sys.exit(len(bad) + len(skipped))
+    if exitafter:
+        sys.exit(len(bad) + len(skipped))
+    else:
+        sys.path.pop(0)
 
 def run_tests(tests, quiet, verbose, runner=None, capture=False):
     """ execute a list of tests
