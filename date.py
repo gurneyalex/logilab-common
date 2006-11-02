@@ -16,7 +16,7 @@
 
 """date manipulation helper functions"""
 
-from mx.DateTime import RelativeDateTime
+from mx.DateTime import RelativeDateTime, strptime
 
 endOfMonth = RelativeDateTime(months=1,day=-1)
 
