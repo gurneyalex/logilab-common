@@ -11,7 +11,7 @@ def decode_QP(string):
     for decoded, charset in decode_header(string):
         if charset is None:
             charset = 'iso-8859-15'
-        parts.append(unicode(decoded, charset))
+        parts.append(unicode(decoded, charset, 'replace'))
 
     return u' '.join(parts)
 
@@ -47,7 +47,7 @@ class UMessage:
                 return [UMessage(msg) for msg in payload]
             if message.get_content_maintype() != 'text':
                 return payload
-            return unicode(payload or '', message.get_charset() or 'iso-8859-15')
+            return unicode(payload or '', message.get_charset() or 'iso-8859-15', 'replace')
         else:
             payload = UMessage(message.get_payload(index, decode))
         return payload
