@@ -54,9 +54,10 @@ try:
 except ImportError:
     ext_modules = None
 
-from __init__ import STD_BLACKLIST, IGNORED_EXTENSIONS
-BASE_BLACKLIST = ('CVS', 'debian', 'dist', 'build', '__buildlog', '.svn')
-IGNORED_EXTENSIONS = ('.pyc', '.pyo', '.elc')
+STD_BLACKLIST = ('CVS', '.svn', '.hg', 'debian', 'dist', 'build')
+
+IGNORED_EXTENSIONS = ('.pyc', '.pyo', '.elc', '~')
+
     
 
 def ensure_scripts(linux_scripts):
