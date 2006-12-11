@@ -5,6 +5,8 @@ ChangeLog for logilab.common
     * tree: make Node iterable (iter on its children)
     * configuration: fix #3197 (OptionsManagerMixin __init__ isn't passing
       correctly its "version" argument) 
+    * textutils: new 'rest' argument to normalize_text to better deal with
+      ReST formated text
     * some packaging fixes
 	
 2006-11-14  --  0.21.0

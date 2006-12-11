@@ -36,6 +36,22 @@ veeeeeeeeeeeeeeerrrrryyyyyyyyyyyyyyyyyyy loooooooooooooooooooooong
 linnnnnnnnnnnes
 
 and empty lines!''')
+        self.assertEquals(ulines(tu.normalize_text('''\
+some ReST formated text
+=======================
+With some times some veeeeeeeeeeeeeeerrrrryyyyyyyyyyyyyyyyyyy loooooooooooooooooooooong linnnnnnnnnnnes
+and normal lines!
+
+another paragraph
+        ''', rest=True)),
+                         '''\
+some ReST formated text
+=======================
+With some times some veeeeeeeeeeeeeeerrrrryyyyyyyyyyyyyyyyyyy
+loooooooooooooooooooooong linnnnnnnnnnnes and normal lines!
+
+another paragraph
+''')
 
     def test_nonregr_unsplitable_word(self):
         self.assertEquals(ulines(tu.normalize_text('''petit complement :

@@ -71,7 +71,7 @@ def unquote(string):
 _BLANKLINES_RGX = re.compile('\r?\n\r?\n')
 _NORM_SPACES_RGX = re.compile('\s+')
 
-def normalize_text(text, line_len=80, indent=''):
+def normalize_text(text, line_len=80, indent='', rest=False):
     """normalize a text to display it with a maximum line size and
     optionally arbitrary indentation. Line jumps are normalized but blank
     lines are kept. The indentation string may be used to insert a
@@ -92,18 +92,21 @@ def normalize_text(text, line_len=80, indent=''):
       inferior to `line_len`, and optionally prefixed by an
       indentation string
     """
+    if rest:
+        normp = normalize_rest_paragraph
+    else:
+        normp = normalize_paragraph
     result = []
     for text in _BLANKLINES_RGX.split(text):
-        result.append(normalize_paragraph(text, line_len, indent))
-##     return ('%s%s%s' % (linesep, indent, linesep)).join(result)
+        result.append(normp(text, line_len, indent))
     return ('%s%s' % (linesep, linesep)).join(result)
+
 
 def normalize_paragraph(text, line_len=80, indent=''):
     """normalize a text to display it with a maximum line size and
     optionaly arbitrary indentation. Line jumps are normalized. The
     indentation string may be used top insert a comment mark for
     instance.
-
 
     :type text: str or unicode
     :param text: the input text to normalize
@@ -120,24 +123,63 @@ def normalize_paragraph(text, line_len=80, indent=''):
       inferior to `line_len`, and optionally prefixed by an
       indentation string
     """
-    #text = text.replace(linesep, ' ')
     text = _NORM_SPACES_RGX.sub(' ', text)
     lines = []
     while text:
-        text = text.strip()
-        pos = min(len(indent) + len(text), line_len)
-        if pos == line_len and len(text) > line_len:
-            pos = pos - len(indent)
-            while pos > 0 and text[pos] != ' ':
-                pos -= 1
-            if pos == 0:
-                pos = min(len(indent) + len(text), line_len)
-                pos = pos - len(indent)
-                while len(text) > pos and text[pos] != ' ':
-                    pos += 1
-        lines.append((indent + text[:pos]))
-        text = text[pos+1:]
+        aline, text = splittext(indent + text.strip(), line_len)
+        lines.append(aline)
     return linesep.join(lines)
+    
+def normalize_rest_paragraph(text, line_len=80, indent=''):
+    """normalize a ReST text to display it with a maximum line size and
+    optionaly arbitrary indentation. Line jumps are normalized. The
+    indentation string may be used top insert a comment mark for
+    instance.
+
+    :type text: str or unicode
+    :param text: the input text to normalize
+
+    :type line_len: int
+    :param line_len: expected maximum line's length, default to 80
+
+    :type indent: str or unicode
+    :param indent: optional string to use as indentation
+
+    :rtype: str or unicode
+    :return:
+      the input text normalized to fit on lines with a maximized size
+      inferior to `line_len`, and optionally prefixed by an
+      indentation string
+    """
+    toreport = ''
+    lines = []
+    for line in text.splitlines():
+        line = indent + toreport + _NORM_SPACES_RGX.sub(' ', line.strip())
+        toreport = ''
+        if len(line) > line_len:
+            # too long line, need split
+            line, toreport = splittext(line, line_len)
+            toreport += ' '
+        lines.append(line)
+    return linesep.join(lines)
+
+def splittext(text, line_len):
+    """split the given text on space according to the given max line size
+    
+    return a 2-uple:
+    * a line <= line_len if possible
+    * the rest of the text which has to be reported on another line
+    """
+    if len(text) <= line_len:
+        return text, ''
+    pos = min(len(text)-1, line_len)
+    while pos > 0 and text[pos] != ' ':
+        pos -= 1
+    if pos == 0:
+        pos = min(len(text), line_len)
+        while len(text) > pos and text[pos] != ' ':
+            pos += 1
+    return text[:pos], text[pos+1:]
 
 
 def get_csv(string, sep=','):
