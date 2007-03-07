@@ -1,6 +1,3 @@
-# Copyright (c) 2003-2006 LOGILAB S.A. (Paris, FRANCE).
-# http://www.logilab.fr/ -- mailto:contact@logilab.fr
-#
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
 # Foundation; either version 2 of the License, or (at your option) any later
@@ -29,7 +26,10 @@ from logilab.common import modutils
 from os import path
 from logilab import common
 from logilab.common import tree
-    
+
+sys.path.insert(0, path.dirname(__file__))
+DATADIR = path.join(path.dirname(__file__), 'data')
+
 class load_module_from_name_tc(TestCase):
     """ load a python module from it's name """
     
@@ -142,8 +142,8 @@ class is_standard_module_tc(TestCase):
         self.assertEqual(modutils.is_standard_module('StringIO'), True)
 
     def test_knownValues_is_standard_module_5(self):
-        self.assertEqual(modutils.is_standard_module('data.module', ('data',)), True)
-        self.assertEqual(modutils.is_standard_module('data.module', (path.abspath('data'),)), True)
+        self.assertEqual(modutils.is_standard_module('data.module', (DATADIR,)), True)
+        self.assertEqual(modutils.is_standard_module('data.module', (path.abspath(DATADIR),)), True)
 
     
 class is_relative_tc(TestCase):
@@ -179,10 +179,10 @@ class get_modules_files_tc(TestCase):
         in subdirectories
         """
         import data
-        modules = modutils.get_module_files('data', data.__path__[0])
+        modules = modutils.get_module_files(DATADIR, data.__path__[0])
         modules.sort()
         self.assertEqual(modules,
-                         [path.join('data', x) for x in ['__init__.py', 'module.py', 'module2.py', 'noendingnewline.py', 'nonregr.py']])
+                         [path.join(DATADIR, x) for x in ['__init__.py', 'module.py', 'module2.py', 'noendingnewline.py', 'nonregr.py']])
 
     def test_load_module_set_attribute(self):
         import logilab.common.fileutils
