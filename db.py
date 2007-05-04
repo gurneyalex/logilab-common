@@ -452,10 +452,22 @@ INSERT INTO %s VALUES (0);''' % (seq_name, seq_name)
         return "CREATE TEMPORARY TABLE %s (%s);" % (table_name,
                                                     table_schema)
     
+    def sql_drop_unique_constraint(self, table, column):
+        # XXX postgres specific ?
+        return 'ALTER TABLE %s DROP CONSTRAINT %s_%s_key' % (
+            table, table, column)
+    
     def increment_sequence(self, cursor, seq_name):
         for sql in self.sqls_increment_sequence(seq_name):
             cursor.execute(sql)
         return cursor.fetchone()[0]
+    
+    def list_users(self, cursor, username=None):
+        if not self.support_users():
+            return None
+        if username is None:
+            return ()
+        return None
 
     
 class _PGAdvFuncHelper(_GenericAdvFuncHelper):
@@ -515,6 +527,12 @@ class _PGAdvFuncHelper(_GenericAdvFuncHelper):
                                                         table_schema)    
         return "CREATE TEMPORARY TABLE %s (%s) ON COMMIT DROP;" % (table_name,
                                                                    table_schema)
+
+    def list_users(self, cursor, username=None):
+        if username is None:
+            return cursor.execute("SELECT usename FROM pg_user")
+        return cursor.execute("SELECT usename FROM pg_user WHERE usename=%(user)s'",
+                              {'user': username})
 
 def dbcmd(cmd, dbhost, dbuser):
     cmd = [cmd]
