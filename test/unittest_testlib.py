@@ -17,9 +17,9 @@ try:
 except NameError:
     __file__ = sys.argv[0]
     
-from logilab.common.testlib import TestCase, unittest_main, SkipAwareTextTestRunner
+from logilab.common.testlib import TestCase, TestSuite, SkipAwareTextTestRunner
 from logilab.common.testlib import mock_object, NonStrictTestLoader, create_files
-from logilab.common.testlib import capture_stdout
+from logilab.common.testlib import capture_stdout, unittest_main, InnerTest
 
 class MockTestCase(TestCase):
     def __init__(self):
@@ -247,7 +247,7 @@ class ExitFirstTC(TestCase):
             def test_2(self): assert False
             def test_3(self): pass
         tests = [FooTC('test_1'), FooTC('test_2')]
-        result = self.runner.run(unittest.TestSuite(tests))
+        result = self.runner.run(TestSuite(tests))
         self.assertEquals(result.testsRun, 2)
         self.assertEquals(len(result.failures), 1)
         self.assertEquals(len(result.errors), 0)
@@ -259,7 +259,7 @@ class ExitFirstTC(TestCase):
             def test_2(self): raise ValueError()
             def test_3(self): pass
         tests = [FooTC('test_1'), FooTC('test_2'), FooTC('test_3')]
-        result = self.runner.run(unittest.TestSuite(tests))
+        result = self.runner.run(TestSuite(tests))
         self.assertEquals(result.testsRun, 2)
         self.assertEquals(len(result.failures), 0)
         self.assertEquals(len(result.errors), 1)
@@ -289,7 +289,21 @@ class TestLoaderTC(TestCase):
     def setUp(self):
         self.loader = NonStrictTestLoader()
         self.module = TestLoaderTC # mock_object(FooTC=TestLoaderTC.FooTC, BarTC=TestLoaderTC.BarTC)
+        self.output = StringIO()
+        self.runner = SkipAwareTextTestRunner(stream=self.output)
     
+    def assertRunCount(self, pattern, module, expected_count, skipped=()):
+        if pattern:
+            suite = self.loader.loadTestsFromNames([pattern], module)
+        else:
+            suite = self.loader.loadTestsFromModule(module)
+        self.runner.test_pattern = pattern
+        self.runner.skipped_patterns = skipped
+        result = self.runner.run(suite)
+        self.runner.test_pattern = None
+        self.runner.skipped_patterns = ()
+        self.assertEquals(result.testsRun, expected_count)
+        
     def test_collect_everything(self):
         """make sure we don't change the default behaviour
         for loadTestsFromModule() and loadTestsFromTestCase
@@ -300,18 +314,15 @@ class TestLoaderTC(TestCase):
         self.assertEquals(len(suite1._tests) + len(suite2._tests), 4)
 
     def test_collect_with_classname(self):
-        collected = self.loader.loadTestsFromName('FooTC', self.module)
-        self.assertEquals(len(collected), 3)
-        collected = self.loader.loadTestsFromName('BarTC', self.module)
-        self.assertEquals(len(collected), 1)
+        self.assertRunCount('FooTC', self.module, 3)
+        self.assertRunCount('BarTC', self.module, 1)
 
     def test_collect_with_classname_and_pattern(self):
         data = [('FooTC.test_foo1', 1), ('FooTC.test_foo', 2), ('FooTC.test_fo', 2),
                 ('FooTC.foo1', 1), ('FooTC.foo', 2), ('FooTC.whatever', 0)
                 ]
         for pattern, expected_count in data:
-            collected = self.loader.loadTestsFromName(pattern, self.module)
-            yield self.assertEquals, len(collected), expected_count
+            yield self.assertRunCount, pattern, self.module, expected_count
         
     def test_collect_with_pattern(self):
         data = [('test_foo1', 1), ('test_foo', 2), ('test_bar', 2),
@@ -319,8 +330,7 @@ class TestLoaderTC(TestCase):
                 ('test', 4), ('ab', 0),
                 ]
         for pattern, expected_count in data:
-            collected = self.loader.loadTestsFromName(pattern, self.module)
-            yield self.assertEquals, len(collected), expected_count
+            yield self.assertRunCount, pattern, self.module, expected_count
 
     def test_tescase_with_custom_metaclass(self):
         class mymetaclass(type): pass
@@ -338,17 +348,15 @@ class TestLoaderTC(TestCase):
                 ('MyTestCase.foo', 2), ('MyTestCase.whatever', 0)
                 ]
         for pattern, expected_count in data:
-            collected = self.loader.loadTestsFromName(pattern, MyMod)
-            yield self.assertEquals, len(collected), expected_count
+            yield self.assertRunCount, pattern, MyMod, expected_count
+            
         
     def test_collect_everything_and_skipped_patterns(self):
         testdata = [ (['foo1'], 3), (['foo'], 2),
                      (['foo', 'bar'], 0),
                      ]
         for skipped, expected_count in testdata:
-            self.loader.skipped_patterns = skipped
-            testsuite = self.loader.loadTestsFromModule(self.module)
-            yield self.assertEquals, testsuite.countTestCases(), expected_count
+            yield self.assertRunCount, None, self.module, expected_count, skipped
         
 
     def test_collect_specific_pattern_and_skip_some(self):
@@ -356,24 +364,41 @@ class TestLoaderTC(TestCase):
                      ('bar', ['bar'], 0), ]
         
         for runpattern, skipped, expected_count in testdata:
-            self.loader.skipped_patterns = skipped
-            collected = self.loader.loadTestsFromName(runpattern, self.module)
-            yield self.assertEquals, len(collected), expected_count
+            yield self.assertRunCount, runpattern, self.module, expected_count, skipped
 
     def test_skip_classname(self):
         testdata = [ (['BarTC'], 3), (['FooTC'], 1), ]
         for skipped, expected_count in testdata:
-            self.loader.skipped_patterns = skipped
-            testsuite = self.loader.loadTestsFromModule(self.module)
-            yield self.assertEquals, testsuite.countTestCases(), expected_count
+            yield self.assertRunCount, None, self.module, expected_count, skipped
 
     def test_skip_classname_and_specific_collect(self):
         testdata = [ ('bar', ['BarTC'], 1), ('foo', ['FooTC'], 0), ]
         for runpattern, skipped, expected_count in testdata:
-            self.loader.skipped_patterns = skipped
-            collected = self.loader.loadTestsFromName(runpattern, self.module)
-            yield self.assertEquals, len(collected), expected_count
-        
+            yield self.assertRunCount, runpattern, self.module, expected_count, skipped
+
+
+    def test_nonregr_dotted_path(self):
+        self.assertRunCount('FooTC.test_foo', self.module, 2)
+
+
+    def test_inner_tests_selection(self):
+        class MyMod:
+            class MyTestCase(TestCase):
+                def test_foo(self): pass
+                def test_foobar(self):
+                    for i in xrange(5):
+                        if i%2 == 0:
+                            yield InnerTest('even', lambda: None)
+                        else:
+                            yield InnerTest('odd', lambda: None)
+                    yield lambda: None
+                    
+        data = [('foo', 7), ('test_foobar', 6), ('even', 3), ('odd', 2),
+                ]
+        for pattern, expected_count in data:
+            yield self.assertRunCount, pattern, MyMod, expected_count
+
+    
 
 def bootstrap_print(msg, output=sys.stdout):
     """sys.stdout will be evaluated at function parsing time"""

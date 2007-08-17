@@ -429,11 +429,21 @@ class SkipAwareTestResult(unittest._TextTestResult):
                     self.stream.writeln('no stderr'.center(len(self.separator2)))
 
 
+
+class TestSuite(unittest.TestSuite):
+    def run(self, result, runcondition=None):
+        for test in self._tests:
+            if result.shouldStop:
+                break
+            test(result, runcondition)
+        return result
+        
+
 class SkipAwareTextTestRunner(unittest.TextTestRunner):
 
     def __init__(self, stream=sys.stderr, verbosity=1,
                  exitfirst=False, capture=False, printonly=None,
-                 pdbmode=False, cvg=None):
+                 pdbmode=False, cvg=None, test_pattern=None, skipped_patterns=()):
         super(SkipAwareTextTestRunner, self).__init__(stream=stream,
                                                       verbosity=verbosity)
         self.exitfirst = exitfirst
@@ -441,12 +451,78 @@ class SkipAwareTextTestRunner(unittest.TextTestRunner):
         self.printonly = printonly
         self.pdbmode = pdbmode
         self.cvg = cvg
-        
+        self.test_pattern = test_pattern
+        self.skipped_patterns = skipped_patterns
+
+    def _this_is_skipped(self, testedname):
+        for pattern in self.skipped_patterns:
+            if pattern in testedname:
+                return True
+        return False
+
+
+    def _runcondition(self, test, skipgenerator=True):
+        if isinstance(test, InnerTest):
+            testname = test.name
+        else:
+            if isinstance(test, TestCase):
+                meth = test._get_test_method()
+                func = meth.im_func
+                testname = '%s.%s' % (meth.im_class.__name__, func.__name__)
+            elif isinstance(test, types.FunctionType):
+                func = test
+                testname = func.__name__
+            elif isinstance(test, types.MethodType):
+                func = test.im_func
+                testname = '%s.%s' % (test.im_class.__name__, func.__name__)
+            else:
+                return True # Not sure when this happens
+            if is_generator(func) and skipgenerator:
+                return True # Let inner tests decide at run time
+        # print 'testname', testname, self.test_pattern
+        if self._this_is_skipped(testname):
+            return False # this was explicitly skipped
+        if self.test_pattern is None:
+            return True # no pattern
+        try:
+            classpattern, testpattern = self.test_pattern.split('.')
+            klass, name = testname.split('.')
+            return classpattern in klass and testpattern in name
+        except ValueError:
+            return self.test_pattern in testname
+    
         
     def _makeResult(self):
         return SkipAwareTestResult(self.stream, self.descriptions, self.verbosity,
                                    self.exitfirst, self.capture, self.printonly,
                                    self.pdbmode, self.cvg)
+
+
+    def run(self, test):
+        "Run the given test case or test suite."
+        result = self._makeResult()
+        startTime = time.time()
+        test(result, self._runcondition)
+        stopTime = time.time()
+        timeTaken = stopTime - startTime
+        result.printErrors()
+        self.stream.writeln(result.separator2)
+        run = result.testsRun
+        self.stream.writeln("Ran %d test%s in %.3fs" %
+                            (run, run != 1 and "s" or "", timeTaken))
+        self.stream.writeln()
+        if not result.wasSuccessful():
+            self.stream.write("FAILED (")
+            failed, errored = map(len, (result.failures, result.errors))
+            if failed:
+                self.stream.write("failures=%d" % failed)
+            if errored:
+                if failed: self.stream.write(", ")
+                self.stream.write("errors=%d" % errored)
+            self.stream.writeln(")")
+        else:
+            self.stream.writeln("OK")
+        return result
 
 
 class keywords(dict):
@@ -479,40 +555,32 @@ class NonStrictTestLoader(unittest.TestLoader):
     python test_foo.py test_foo1 will run test_foo1
     python test_foo.py test_bar will run FooTC.test_bar1 and BarTC.test_bar2
     """
+    suiteClass = TestSuite
 
-    def __init__(self):
-        self.skipped_patterns = []
 
-    
+    def _collect_tests(self, module):
+        tests = {}
+        for obj in vars(module).values():
+            if (issubclass(type(obj), (types.ClassType, type)) and
+                 issubclass(obj, unittest.TestCase)):
+                classname = obj.__name__
+                methodnames = []
+                # obj is a TestCase class
+                for attrname in dir(obj):
+                    if attrname.startswith(self.testMethodPrefix):
+                        attr = getattr(obj, attrname)
+                        if callable(attr):
+                            methodnames.append(attrname)
+                # keep track of class (obj) for convenience
+                tests[classname] = (obj, methodnames)
+        return tests
+
     def loadTestsFromNames(self, names, module=None):
         suites = []
         for name in names:
             suites.extend(self.loadTestsFromName(name, module))
         return self.suiteClass(suites)
 
-
-    def _collect_tests(self, module):
-        tests = {}
-        for obj in vars(module).values():
-            if issubclass(type(obj), (types.ClassType, type)) and \
-                   issubclass(obj, unittest.TestCase):
-                classname = obj.__name__
-                methodnames = []
-                if self._this_is_skipped(classname):
-                    continue
-                # obj is a TestCase class
-                for attrname in dir(obj):
-                    if attrname.startswith(self.testMethodPrefix):
-                        attr = getattr(obj, attrname)
-                        if callable(attr):
-                            for pattern in self.skipped_patterns:
-                                if pattern in attrname:
-                                    break
-                            else:
-                                methodnames.append(attrname)
-                # keep track of class (obj) for convenience
-                tests[classname] = (obj, methodnames)
-        return tests
 
     def loadTestsFromSuite(self, module, suitename):
         try:
@@ -525,7 +593,7 @@ class NonStrictTestLoader(unittest.TestLoader):
         # _tests explicitly
         return suite._tests
     
-        
+
     def loadTestsFromName(self, name, module=None):
         parts = name.split('.')
         if module is None or len(parts) > 2:
@@ -548,45 +616,15 @@ class NonStrictTestLoader(unittest.TestLoader):
             else:
                 # case python unittest_foo.py something
                 for klass, methodnames in tests.values():
-                    collected += [klass(methodname) for methodname in methodnames
-                                  if self._test_should_be_collected(methodname, pattern)]
+                    collected += [klass(methodname) for methodname in methodnames]
         elif len(parts) == 2:
             # case "MyClass.test_1"
             classname, pattern = parts
             klass, methodnames = tests.get(classname, (None, []))
             for methodname in methodnames:
-                collected = [klass(methodname) for methodname in methodnames
-                             if self._test_should_be_collected(methodname, pattern)]
+                collected = [klass(methodname) for methodname in methodnames]
         return collected
 
-    def _test_should_be_collected(self, methodname, pattern):
-        """returns True if <methodname> matches <pattern>
-        >>> self._test_should_be_collected('test_foobar', 'foo')
-        True
-        >>> self._test_should_be_collected('testfoobar', 'foo')
-        True
-        >>> self._test_should_be_collected('test_foobar', 'test_foo')
-        True
-        >>> self._test_should_be_collected('test_foobar', 'testfoo')
-        False
-        """
-        return pattern in methodname
-
-
-    def _this_is_skipped(self, testedname):
-        for pattern in self.skipped_patterns:
-            if pattern in testedname:
-                return True
-        return False
-
-    def getTestCaseNames(self, testCaseClass):
-        """Return a sorted sequence of method names found within testCaseClass
-        """
-        if self._this_is_skipped(testCaseClass.__name__):
-            return []
-        testnames = super(NonStrictTestLoader, self).getTestCaseNames(testCaseClass)
-        return [testname for testname in testnames
-                if not self._this_is_skipped(testname)]
 
 
 class SkipAwareTestProgram(unittest.TestProgram):
@@ -614,21 +652,17 @@ Examples:
     def __init__(self, module='__main__', defaultTest=None, batchmode=False, cvg=None):
         self.batchmode = batchmode
         self.cvg = cvg
-        # if cvg:
-        #     cvg.start()
         super(SkipAwareTestProgram, self).__init__(
             module=module, defaultTest=defaultTest,
             testLoader=NonStrictTestLoader())
-        # if cvg:
-        #     cvg.stop()
-       
     
     def parseArgs(self, argv):
         self.pdbmode = False
         self.exitfirst = False
         self.capture = 0
         self.printonly = None
-        skipped_patterns = []
+        self.skipped_patterns = []
+        self.test_pattern = None
         import getopt
         try:
             options, args = getopt.getopt(argv[1:], 'hHvixqcp:s:',
@@ -651,8 +685,7 @@ Examples:
                 if opt in ('-p', '--printonly'):
                     self.printonly = re.compile(value)
                 if opt in ('-s', '--skip'):
-                    skipped_patterns = [pat.strip() for pat in value.split(',')]
-            self.testLoader.skipped_patterns = skipped_patterns
+                    self.skipped_patterns = [pat.strip() for pat in value.split(',')]
             if self.printonly is not None:
                 self.capture += 1
             if len(args) == 0 and self.defaultTest is None:
@@ -663,6 +696,7 @@ Examples:
                     self.test = self.testLoader.loadTestsFromModule(self.module)
                 return
             if len(args) > 0:
+                self.test_pattern = args[0]
                 self.testNames = args
             else:
                 self.testNames = (self.defaultTest,)
@@ -677,7 +711,9 @@ Examples:
                                                   capture=self.capture,
                                                   printonly=self.printonly,
                                                   pdbmode=self.pdbmode,
-                                                  cvg=self.cvg)
+                                                  cvg=self.cvg,
+                                                  test_pattern=self.test_pattern,
+                                                  skipped_patterns=self.skipped_patterns)
         result = self.testRunner.run(self.test)
         if os.environ.get('PYDEBUG'):
             warn("PYDEBUG usage is deprecated, use -i / --pdb instead", DeprecationWarning)
@@ -812,6 +848,13 @@ def parse_generative_args(params):
 
     return args, kwargs
 
+class InnerTest(tuple):
+    def __new__(cls, name, *data):
+        instance = tuple.__new__(cls, data)
+        instance.name = name
+        return instance
+    
+
 class TestCase(unittest.TestCase):
     """unittest.TestCase with some additional methods"""
 
@@ -899,7 +942,10 @@ class TestCase(unittest.TestCase):
         self._stop_capture()
         return True
 
-    def __call__(self, result=None):
+    def _get_test_method(self):
+        return getattr(self, self.__testMethodName)
+
+    def __call__(self, result=None, runcondition=None):
         """rewrite TestCase.__call__ to support generative tests
         This is mostly a copy/paste from unittest.py (i.e same
         variable names, same logic, except for the generative tests part)
@@ -913,14 +959,16 @@ class TestCase(unittest.TestCase):
         self._printonly = getattr(result, 'printonly', None)
         # if result.cvg:
         #     result.cvg.start()
+        testMethod = self._get_test_method()
+        if runcondition and not runcondition(testMethod):
+            return # test is skipped
         result.startTest(self)
-        testMethod = getattr(self, self.__testMethodName)
         try:
             if not self.quiet_run(result, self.setUp):
                 return
             # generative tests
             if is_generator(testMethod.im_func):
-                success = self._proceed_generative(result, testMethod)
+                success = self._proceed_generative(result, testMethod, runcondition)
             else:
                 status = self._proceed(result, testMethod)
                 success = (status == 0)
@@ -935,12 +983,16 @@ class TestCase(unittest.TestCase):
 
 
             
-    def _proceed_generative(self, result, testfunc, args=()):
+    def _proceed_generative(self, result, testfunc, runcondition=None):
         # cancel startTest()'s increment
         result.testsRun -= 1
         self._start_capture()
+        success = True
         try:
             for params in testfunc():
+                if runcondition and not runcondition(testfunc, skipgenerator=False):
+                    if not (isinstance(params, InnerTest) and runcondition(params)):
+                        continue
                 if not isinstance(params, (tuple, list)):
                     params = (params,)
                 func = params[0]
@@ -1122,7 +1174,6 @@ import doctest
 class SkippedSuite(unittest.TestSuite):
     def test(self):
         """just there to trigger test execution"""
-        print 'goiooo'
         self.skipped_test('doctest module has no DocTestSuite class')
 
 
@@ -1171,7 +1222,7 @@ class DocTest(TestCase):
     without this hack
     """
     skipped = ()
-    def __call__(self, result=None):
+    def __call__(self, result=None, runcondition=None):
         try:
             finder = DocTestFinder(skipped=self.skipped)
             if sys.version_info >= (2, 4):
