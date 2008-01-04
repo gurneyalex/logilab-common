@@ -164,6 +164,12 @@ class TestlibTC(TestCase):
         self.assertRaises(AssertionError, self.tc.assertTextEqual, text1, text2)
 
 
+    def test_assert_raises(self):
+        exc = self.tc.assertRaises(KeyError, {}.__getitem__, 'foo')
+        self.failUnless(isinstance(exc, KeyError))
+        self.assertEquals(exc.args, ('foo',))
+        
+
 
 
 class GenerativeTestsTC(TestCase):
