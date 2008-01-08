@@ -1,6 +1,9 @@
 logilab-common (0.26.1-1) unstable; urgency=low
 
   * new upstream release
+  * updated standards to 3.7.3
+  * Fixed Homepage header
+  * tests are no longer installed in the doc package
 
  -- Alexandre Fayolle <afayolle@debian.org>  Tue, 08 Jan 2008 09:38:22 +0100
 
