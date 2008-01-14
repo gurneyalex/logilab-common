@@ -1,6 +1,9 @@
 ChangeLog for logilab.common
 ============================
 
+ --
+    * deprecation: new class_moved utility function
+	
 2008-01-10  --  0.26.1
     * optparser: support --version at main command level
     * testlib: added man page for pytest
