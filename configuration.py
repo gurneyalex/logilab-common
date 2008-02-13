@@ -389,6 +389,10 @@ class OptionsManagerMixIn(object):
             self._short_options[opt_dict['short']] = opt_name
             args.append('-' + opt_dict['short'])
             del opt_dict['short']
+        available_keys = set(self._optik_parser.option_class.ATTRS)
+        for key in opt_dict.keys():
+            if not key in available_keys:
+                opt_dict.pop(key)
         return args, opt_dict
             
     def cb_set_provider_option(self, option, opt_name, value, parser):
