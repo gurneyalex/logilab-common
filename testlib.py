@@ -406,7 +406,11 @@ class TestSuite(unittest.TestSuite):
                 break
             test(result, runcondition)
         return result
-        
+    
+    # python2.3 compat
+    def __call__(self, *args, **kwds):
+        return self.run(*args, **kwds)
+
 
 class SkipAwareTextTestRunner(unittest.TextTestRunner):
 
@@ -424,7 +428,7 @@ class SkipAwareTextTestRunner(unittest.TextTestRunner):
         self.skipped_patterns = skipped_patterns
 
     def _this_is_skipped(self, testedname):
-        return any( (pat in testedname) for pat in self.skipped_patterns )
+        return any([(pat in testedname) for pat in self.skipped_patterns])
 
     def _runcondition(self, test, skipgenerator=True):
         if isinstance(test, InnerTest):
@@ -591,7 +595,7 @@ class NonStrictTestLoader(unittest.TestLoader):
         return collected
 
     def _this_is_skipped(self, testedname):
-        return any( (pat in testedname) for pat in self.skipped_patterns )
+        return any([(pat in testedname) for pat in self.skipped_patterns])
 
     def getTestCaseNames(self, testCaseClass):
         """Return a sorted sequence of method names found within testCaseClass
