@@ -120,7 +120,6 @@ class PyConnection:
     def __getattr__(self, attrname):
         return getattr(self._cnx, attrname)    
 
-
 class PyCursor:
     """A simple cursor wrapper in python (useful for profiling)"""
     def __init__(self, cursor):
@@ -172,16 +171,16 @@ class DBAPIAdapter:
         kwargs = {'host' : host, 'port' : port, 'database' : database,
                   'user' : user, 'password' : password}
         cnx = self._native_module.connect(**kwargs)
-        return self._wrap_if_needed(cnx)
+        return self._wrap_if_needed(cnx, user)
 
-    def _wrap_if_needed(self, cnx):
+    def _wrap_if_needed(self, cnx, user):
         """Wraps the connection object if self._pywrap is True, and returns it
         If false, returns the original cnx object
         """
         if self._pywrap:
-            return PyConnection(cnx)
-        else:
-            return cnx
+            cnx = PyConnection(cnx)
+        cnx.logged_user = user
+        return cnx
     
     def __getattr__(self, attrname):
         return getattr(self._native_module, attrname)
@@ -224,7 +223,7 @@ class _PgdbAdapter(DBAPIAdapter):
         kwargs = {'host' : host, 'database' : database,
                   'user' : user, 'password' : password}
         cnx = self._native_module.connect(**kwargs)
-        return self._wrap_if_needed(cnx)
+        return self._wrap_if_needed(cnx, user)
 
 
 class _PsycopgAdapter(DBAPIAdapter):
@@ -242,7 +241,7 @@ class _PsycopgAdapter(DBAPIAdapter):
             cnx_string = '%s password=%s' % (cnx_string, password)
         cnx = self._native_module.connect(cnx_string)
         cnx.set_isolation_level(1)
-        return self._wrap_if_needed(cnx)
+        return self._wrap_if_needed(cnx, user)
     
 class _Psycopg2Adapter(_PsycopgAdapter):
     """Simple Psycopg2 Adapter to DBAPI (cnx_string differs from classical ones)
@@ -287,7 +286,7 @@ class _PgsqlAdapter(DBAPIAdapter):
                   'database' : database,
                   'user' : user, 'password' : password or None}
         cnx = self._native_module.connect(**kwargs)
-        return self._wrap_if_needed(cnx)
+        return self._wrap_if_needed(cnx, user)
 
 
     def Binary(self, string):
@@ -416,7 +415,7 @@ class _SqliteAdapter(DBAPIAdapter):
     def connect(self, host='', database='', user='', password='', port=''):
         """Handles sqlite connexion format"""
         cnx = self._native_module.connect(database)
-        return self._wrap_if_needed(cnx)
+        return self._wrap_if_needed(cnx, user)
 
 
 # Mysql ##############################################################
@@ -464,7 +463,7 @@ class _MySqlDBAdapter(DBAPIAdapter):
             if charset.lower() == 'utf-8':
                 charset = 'utf8'
             cnx.set_character_set(charset)
-        return self._wrap_if_needed(cnx)
+        return self._wrap_if_needed(cnx, user)
 
     def process_value(self, value, description, encoding='utf-8', binarywrap=None):
         typecode = description[1]

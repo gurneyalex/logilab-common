@@ -1,6 +1,8 @@
 ChangeLog for logilab.common
 ============================
-
+--
+    * db: remember logged user on the connection
+	
 2008-03-12  --  0.29.1
     * date: new nb_open_days function counting worked days between two date
     * adbh: add -p option to mysql commands to ask for password
