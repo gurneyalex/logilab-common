@@ -552,7 +552,7 @@ class OptionsManagerMixIn(object):
         return self._optik_parser.format_help()
     
 
-class Method:
+class Method(object):
     """used to ease late binding of default method (so you can define options
     on the class using default methods on the configuration instance)
     """
@@ -570,9 +570,8 @@ class Method:
         return getattr(self._inst, self.method)()
 
         
-class OptionsProviderMixIn:
-    """Mixin to provide options to an OptionsManager
-    """
+class OptionsProviderMixIn(object):
+    """Mixin to provide options to an OptionsManager"""
     
     # those attributes should be overridden
     priority = -1
@@ -784,7 +783,7 @@ class Configuration(ConfigurationMixIn):
         super(Configuration, self).__init__(config_file=config_file, usage=usage, version=version)
 
 
-class OptionsManager2ConfigurationAdapter:
+class OptionsManager2ConfigurationAdapter(object):
     """Adapt an option manager to behave like a
     `logilab.common.configuration.Configuration` instance
     """
