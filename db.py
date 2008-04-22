@@ -403,7 +403,6 @@ class _PySqlite2Adapter(DBAPIAdapter):
                     self.__class__.__bases__[0].execute(self, sql)
                 else:
                     self.__class__.__bases__[0].execute(self, self._replace_parameters(sql, kwargs), kwargs)
-                    
             def executemany(self, sql, kwargss):
                 if not isinstance(kwargss, (list, tuple)):
                     kwargss = tuple(kwargss)
