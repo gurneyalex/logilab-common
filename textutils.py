@@ -46,7 +46,10 @@ __docformat__ = "restructuredtext en"
 
 import re
 from unicodedata import normalize as _uninormalize
-from os import linesep
+try:
+    from os import linesep
+except ImportError:
+    linesep = '\n' # gae
 
 
 MANUAL_UNICODE_MAP = {

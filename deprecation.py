@@ -21,8 +21,6 @@ __docformat__ = "restructuredtext en"
 import sys
 from warnings import warn
 
-from logilab.common.modutils import LazyObject, load_module_from_name
-
 
 class deprecated(type):
     """metaclass to print a warning on instantiation of a deprecated class"""
@@ -105,31 +103,34 @@ def moved(modpath, objname):
     instead (which has no lazy import feature though).
     """
     def callnew(*args, **kwargs):
+        from logilab.common.modutils import load_module_from_name
         message = "object %s has been moved to module %s" % (objname, modpath)
         warn(message, DeprecationWarning, stacklevel=2)
         m = load_module_from_name(modpath)
         return getattr(m, objname)(*args, **kwargs)
     return callnew
 
+# from logilab.common.modutils import LazyObject
 
-class WarnLazyObject(LazyObject):
-    def __init__(self, oldname, newname):
-        # XXX doesn't work if module isn't in a package
-        package, module = newname.rsplit('.', 1)
-        super(WarnLazyObject, self).__init__(package, module)
-        self.oldname = oldname
-        self.newname = newname
-        print 'hop', oldname, newname
-        sys.modules[oldname] = self
+# class WarnLazyObject(LazyObject):
+#     def __init__(self, oldname, newname):
+#         # XXX doesn't work if module isn't in a package
+#         package, module = newname.rsplit('.', 1)
+#         super(WarnLazyObject, self).__init__(package, module)
+#         self.oldname = oldname
+#         self.newname = newname
+#         print 'hop', oldname, newname
+#         sys.modules[oldname] = self
 
-    def __getobj(self):
-        if self._imported is None:
-            message = "module %s has moved, it's now %s" % (
-                self.oldname, self.newname)
-            warn(message, DeprecationWarning, stacklevel=2)
-        return super(WarnLazyObject, self).__getobj()
+#     def __getobj(self):
+#         if self._imported is None:
+#             message = "module %s has moved, it's now %s" % (
+#                 self.oldname, self.newname)
+#             warn(message, DeprecationWarning, stacklevel=2)
+#         return super(WarnLazyObject, self).__getobj()
 
-module_moved = WarnLazyObject
+
+# module_moved = WarnLazyObject
 
 def obsolete(reason="This function is obsolete"):
     """this function is an alternative to `deprecated_function`
