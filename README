@@ -30,6 +30,9 @@ Provided modules
 
 Here is a brief description of the available modules :
 
+* adbh.py:
+  XXX
+
 * astutils:
   Some utilities function to manipulate Python's AST.
 
@@ -39,6 +42,9 @@ Here is a brief description of the available modules :
 
 * cache.py :
   A cache implementation with a least recently used algorithm.
+
+* clcommands.py:
+  XXX
 
 * cli.py :
   Command line interface helper classes.
@@ -57,14 +63,29 @@ Here is a brief description of the available modules :
 * daemon.py :
   A daemon mix-in class.
 
+* date.py:
+  XXX
+
 * db.py :
   A generic method to get a database connection. 
 
-* html.py :
-  Return an html formatted traceback from python exception infos.
+* debugger.py:
+  XXX
+
+* decorators.py:
+  XXX
+
+* deprecation.py:
+  XXX
 
 * fileutils.py :
   Some file / file path manipulation utilities.
+
+* graph.py:
+  XXX
+
+* html.py :
+  Return an html formatted traceback from python exception infos.
 
 * interface.py
   Bases class for interfaces.
@@ -73,23 +94,47 @@ Here is a brief description of the available modules :
   Define a logger interface and two concrete loggers : one which prints
   everything on stdout, the other using syslog.
 
+* logging_ext.py:
+  XXX
+
+* logservice.py:
+  XXX
+
 * modutils.py :
   Module manipulation utilities.
+
+* monclient.py:
+  XXX
+
+* monserver.py:
+  XXX
 
 * optik_ext :
   Add an abstraction level to transparently import optik classes from
   optparse (python >= 2.3) or the optik package. It also defines two
   new option types : regexp and csv.
 
+* optparser.py:
+  XXX
+
 * patricia.py :
   A Python implementation of PATRICIA trie (Practical Algorithm to
   Retrieve Information Coded in Alphanumeric).
 
-* shellutils:
+* pdf_ext.py:
+  XXX
+
+* pytext.py:
+  XXX
+
+* shellutils.py:
   Some utilities to replace shell scripts with python scripts.
 
 * sqlgen.py :
   Helper class to generate SQL strings to use with python's DB-API.
+
+* table.py:
+  XXX
 
 * testlib.py :
   Generic tests execution methods.
@@ -100,6 +145,9 @@ Here is a brief description of the available modules :
 * tree.py :
   Base class to represent tree structure, and some others to make it
   works with the visitor implementation (see below).
+
+* umessage.py:
+  XXX
 
 * ureports:
   Provides a way to create simple reports using python objects
@@ -118,6 +166,8 @@ Here is a brief description of the available modules :
   distutils syntax. Note that you can use this to install files that
   are not twisted plugins in any package directory of your application.
 
+* xmlrpcutils.py:
+  XXX
 
 Comments, support, bug reports
 ------------------------------
