@@ -427,7 +427,6 @@ class SkipAwareTextTestRunner(unittest.TextTestRunner):
         self.cvg = cvg
         self.test_pattern = test_pattern
         self.skipped_patterns = skipped_patterns
-        self.options = options
 
     def _this_is_skipped(self, testedname):
         return any([(pat in testedname) for pat in self.skipped_patterns])
@@ -884,7 +883,6 @@ class TestCase(unittest.TestCase):
         self._out = []
         self._err = []
         self._current_test_descr = None
-        self._options_ = None
 
     def datadir(cls):
         """helper attribute holding the standard test's data directory
@@ -968,7 +966,6 @@ class TestCase(unittest.TestCase):
 
     def _get_test_method(self):
         return getattr(self, self.__testMethodName)
-
 
     def optval(self, option, default=None):
         return getattr(self._options_, option, default)
@@ -1100,19 +1097,25 @@ class TestCase(unittest.TestCase):
             self.fail('\n'.join(msgs))
     assertDictEqual = assertDictEquals
 
-    def assertSetEquals(self, got, expected):
+    def assertSetEquals(self, got, expected, msg=None):
         """compares two iterables and shows difference between both"""
         got, expected = list(got), list(expected)
-        self.assertEquals(len(got), len(expected), '%s != %s' % (got, expected))
+        if msg is None:
+	        msg1 = '%s != %s' % (got, expected)
+        else:
+            msg1 = msg
+        self.assertEquals(len(got), len(expected), msg1)
         got, expected = set(got), set(expected)
         if got != expected:
             missing = expected - got
             unexpected = got - expected
-            self.fail('\tunexepected: %s\n\tmissing: %s' % (unexpected,
-                                                            missing))
+            if msg is None:
+                msg = '\tunexepected: %s\n\tmissing: %s' % (unexpected,
+                                                               missing)
+            self.fail(msg)
     assertSetEqual = assertSetEquals
 
-    def assertListEquals(self, l1, l2):
+    def assertListEquals(self, l1, l2, msg=None):
         """compares two lists
 
         If the two list differ, the first difference is shown in the error
@@ -1128,32 +1131,37 @@ class TestCase(unittest.TestCase):
                     self.fail('%r != %r for index %d' % (_l1[0], value, i))
                 del _l1[0]
             except IndexError:
-                msg = 'l1 has only %d elements, not %s (at least %r missing)'
-                self.fail(msg % (i, len(l2), value))
+                if msg is None:
+                    msg = 'l1 has only %d elements, not %s (at least %r missing)'% (i, len(l2), value)
+                self.fail(msg)
         if _l1:
-            self.fail('l2 is lacking %r' % _l1)
+            if msg is None:
+                msg = 'l2 is lacking %r' % _l1
+            self.fail(msg)
     assertListEqual = assertListEquals
     
-    def assertLinesEquals(self, l1, l2):
+    def assertLinesEquals(self, l1, l2, msg=None):
         """assert list of lines are equal"""
-        self.assertListEquals(l1.splitlines(), l2.splitlines())
+        self.assertListEquals(l1.splitlines(), l2.splitlines(), msg)
     assertLineEqual = assertLinesEquals
 
-    def assertXMLWellFormed(self, stream):
+    def assertXMLWellFormed(self, stream, msg=None):
         """asserts the XML stream is well-formed (no DTD conformance check)"""
         from xml.sax import make_parser, SAXParseException
         parser = make_parser()
         try:
             parser.parse(stream)
         except SAXParseException:
-            self.fail('XML stream not well formed')
+            if msg is None:
+                msg = 'XML stream not well formed'
+            self.fail(msg)
     assertXMLValid = deprecated_function(assertXMLWellFormed,
                                          'assertXMLValid renamed to more precise assertXMLWellFormed')
 
-    def assertXMLStringWellFormed(self, xml_string):
+    def assertXMLStringWellFormed(self, xml_string, msg=None):
         """asserts the XML string is well-formed (no DTD conformance check)"""
         stream = StringIO(xml_string)
-        self.assertXMLWellFormed(stream)
+        self.assertXMLWellFormed(stream, msg)
         
     assertXMLStringValid = deprecated_function(
         assertXMLStringWellFormed, 'assertXMLStringValid renamed to more precise assertXMLStringWellFormed')
