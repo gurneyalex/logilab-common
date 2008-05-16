@@ -22,10 +22,10 @@ formatted as text and html
 from __future__ import generators
 
 import sys
-from os import linesep
 from cStringIO import StringIO
 from StringIO import StringIO as UStringIO
 
+from logilab.common.textutils import linesep
 
 def get_nodes(node, klass):
     """return an iterator on all children node of the given klass"""
