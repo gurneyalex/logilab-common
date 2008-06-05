@@ -47,8 +47,6 @@ log title.
 import sys
 from stat import S_IWRITE
 
-from logilab.common.fileutils import ensure_fs_mode
-
 BULLET = '*'
 INDENT = '    '
 
@@ -188,6 +186,8 @@ class ChangeLog(object):
     
     def save(self):
         """write back change log"""
+        # filetutils isn't importable in appengine, so import locally
+        from logilab.common.fileutils import ensure_fs_mode
         ensure_fs_mode(self.file, S_IWRITE)
         self.write(open(self.file, 'w'))
             
