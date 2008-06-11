@@ -1146,8 +1146,7 @@ class TestCase(unittest.TestCase):
             missing = expected - got
             unexpected = got - expected
             if msg is None:
-                msg = '\tunexepected: %s\n\tmissing: %s' % (unexpected,
-                                                               missing)
+                msg = '\tunexpected: %s\n\tmissing: %s' % (unexpected, missing)
             self.fail(msg)
     assertSetEqual = assertSetEquals
 
