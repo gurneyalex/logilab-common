@@ -10,6 +10,7 @@ ChangeLog for logilab.common
       - added assertUnorderedIterableEquals
 	
     * umessage.date() return unparsage string as is instead of None
+	
 2008-09-08  --  0.32.0
     * textutils: add the apply_unit fonction
     * testlib:
@@ -61,7 +62,7 @@ ChangeLog for logilab.common
 2008-01-10  --  0.26.1
     * optparser: support --version at main command level
     * testlib: added man page for pytest
-    * textutils: fix a bug in normalize_[rest_]paragraph which may cause
+    * textutils: fix a bug in normalize{_,_rest_}paragraph which may cause
       infinite loop if an indent string containing some spaces is given
 	
 2008-01-07  --  0.26.0
