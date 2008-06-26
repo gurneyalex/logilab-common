@@ -18,6 +18,9 @@
 """
 __docformat__ = "restructuredtext en"
 
+from types import MethodType
+from time import clock
+
 # XXX rewrite so we can use the decorator syntax when keyarg has to be specified
 
 def cached(callableobj, keyarg=None):
@@ -113,7 +116,19 @@ class classproperty(object):
         return self.get(cls)
 
 
-from time import clock
+class iclassmethod(object):
+    '''descriptor for method which should be available as class method if called
+    on the class or instance method if called on an instance
+    '''
+    def __init__(self, func):
+        self.func = func
+    def __get__(self, instance, objtype):
+        if instance is None:
+            return MethodType(self.func, objtype, objtype.__class__)
+        return MethodType(self.func, instance, objtype)
+    def __set__(self, instance, value):
+        raise AttributeError("can't set attribute")
+
 
 def timed(f):
     def wrap(*args, **kwargs):
