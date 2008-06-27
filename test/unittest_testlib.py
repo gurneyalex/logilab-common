@@ -20,6 +20,7 @@ except NameError:
 from logilab.common.testlib import TestCase, TestSuite, SkipAwareTextTestRunner
 from logilab.common.testlib import mock_object, NonStrictTestLoader, create_files
 from logilab.common.testlib import capture_stdout, unittest_main, InnerTest
+from logilab.common.testlib import with_tempdir
 
 class MockTestCase(TestCase):
     def __init__(self):
@@ -585,6 +586,69 @@ class OutErrCaptureTC(TestCase):
         bootstrap_print("hello")
         self.assertEquals(output.restore(), "hello")
         
+
+class DecoratorTC(TestCase):
+    
+    @with_tempdir
+    def test_tmp_dir_normal(self):
+
+
+        tempdir = tempfile.gettempdir()
+        # assert temp directory is empty
+        self.assertListEquals(list(os.walk(tempdir)),
+            [(tempdir,[],[])])
+
+        witness = []
+
+        @with_tempdir
+        def createfile(list):
+            tempfile.mkstemp()
+            tempfile.mkstemp()
+            dir = tempfile.mkdtemp()
+            tempfile.mkstemp(dir=dir)
+            tempfile.mkdtemp()
+            list.append(True)
+
+        self.assertFalse(witness)
+        createfile(witness)
+        self.assertTrue(witness)
+        
+        self.assertEquals(tempfile.gettempdir(), tempdir)
+        
+        # assert temp directory is empty
+        self.assertListEquals(list(os.walk(tempdir)),
+            [(tempdir,[],[])])
+
+    @with_tempdir
+    def test_tmp_dir_normal(self):
+
+        tempdir = tempfile.gettempdir()
+        # assert temp directory is empty
+        self.assertListEquals(list(os.walk(tempfile.tempdir)),
+            [(tempfile.tempdir,[],[])])
+
+
+        class WitnessException(Exception):
+            pass
+
+        @with_tempdir
+        def createfile():
+            tempfile.mkstemp()
+            tempfile.mkstemp()
+            dir = tempfile.mkdtemp()
+            tempfile.mkstemp(dir=dir)
+            tempfile.mkdtemp()
+            raise WitnessException()
+
+        self.assertRaises(WitnessException, createfile)
+        
+
+        # assert tempdir didn't change
+        self.assertEquals(tempfile.gettempdir(), tempdir)
+
+        # assert temp directory is empty
+        self.assertListEquals(list(os.walk(tempdir)),
+            [(tempdir,[],[])])
 
 if __name__ == '__main__':
     unittest_main()

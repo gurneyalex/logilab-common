@@ -33,10 +33,13 @@ import traceback
 import unittest
 import difflib
 import types
+import tempfile
+from shutil import rmtree
 from operator import itemgetter
 from warnings import warn
 from compiler.consts import CO_GENERATOR
 from ConfigParser import ConfigParser
+
 
 # PRINT_ = file('stdout.txt', 'w').write
 
@@ -64,6 +67,24 @@ DEFAULT_PREFIXES = ('test', 'regrtest', 'smoketest', 'unittest',
                     'func', 'validation')
 
 ENABLE_DBC = False
+
+
+def with_tempdir(callable):
+    """A decorator ensuring no temporary file left when the function return
+    Work only for temporary file create with the tempfile module"""
+    def proxy(*args, **kargs):
+        
+        old_tmpdir = tempfile.gettempdir()
+        new_tmpdir = tempfile.mkdtemp("-logilab-common-testlib","temp-dir-")
+        tempfile.tempdir = new_tmpdir
+        try:
+            return callable(*args, **kargs)
+        finally:
+            try:
+                rmtree(new_tmpdir, ignore_errors=True)
+            finally:
+                tempfile.tempdir = old_tmpdir
+    return proxy
 
 def main(testdir=None, exitafter=True):
     """Execute a test suite.
