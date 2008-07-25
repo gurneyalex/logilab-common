@@ -1183,20 +1183,28 @@ class TestCase(unittest.TestCase):
     def assertUnorderedIterableEquals(self, got, expected, msg=None):
         """compares two iterable and shows difference between both"""
         got, expected = list(got), list(expected)
-        if msg is None:
-	        msg1 = '%s != %s' % (sorted(got), sorted(expected))
-        else:
-            msg1 = msg
-        self.assertEquals(len(got), len(expected), msg1)
-        got, expected = set(got), set(expected)
-        if got != expected:
-            missing = expected - got
-            unexpected = got - expected
+        self.assertSetEqual(set(got), set(expected), msg)
+        if len(got) != len(expected):
             if msg is None:
-                msg = '\tunexpected: %s\n\tmissing: %s' % (unexpected, missing)
+                msg = ['Iterable have the same elements but not the same number',
+                       '\t<element>\t<expected>i\t<got>']
+                got_count = {}
+                expected_count = {}
+                for element in got:
+                    got_count[element] = got_count.get(element,0) + 1
+                for element in expected:
+                    expected_count[element] = expected_count.get(element,0) + 1
+                # we know that got_count.key() == expected_count.key()
+                # because of assertSetEquals
+                for element, count in got_count.iteritems():
+                    other_count = expected_count[element]
+                    if other_count != count:
+                        msg.append('\t%s\t%s\t%s' % (element, other_count, count))
+
             self.fail(msg)
 
     assertUnorderedIterableEqual = assertUnorderedIterableEquals
+    assertUnordIterEquals = assertUnordIterEqual = assertUnorderedIterableEqual
 
     def assertSetEquals(self,got,expected, msg=None):
         if not(isinstance(got, set) and isinstance(expected, set)):
@@ -1210,8 +1218,8 @@ class TestCase(unittest.TestCase):
         items['unexpected'] = got - expected
         if any(items.itervalues()):
             if msg is None:
-                msg = '\n'.join('%s:\n\t%s' % (key,"\n\t".join(value))
-                    for key, value in items.iteritems() if value)
+                msg = '\n'.join('%s:\n\t%s' % (key,"\n\t".join(str(value) for value in values))
+                    for key, values in items.iteritems() if values)
             self.fail(msg)
 
 
