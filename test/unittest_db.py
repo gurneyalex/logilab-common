@@ -162,7 +162,7 @@ class DBAPIAdaptersTC(TestCase):
             self.skip('postgresql pgdb module not installed')
         number_types = ('int2', 'int4', 'serial', 
                         'int8', 'float4', 'float8', 
-                        'numeric', 'bool', 'money')
+                        'numeric', 'bool', 'money', 'decimal')
         for num_type in number_types:
             yield self.assertEquals, num_type, module.NUMBER
         yield self.assertNotEquals, 'char', module.NUMBER
