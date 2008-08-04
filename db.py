@@ -348,6 +348,17 @@ class _PySqlite2Adapter(DBAPIAdapter):
         def adapt_boolean(bval):
             return str(bval).upper()
         sqlite.register_adapter(bool, adapt_boolean)
+        
+
+        # decimal type handling
+        from decimal import Decimal
+        def adapt_decimal(data):
+            return u"%s" % data
+        sqlite.register_adapter(Decimal,adapt_decimal)
+
+        def convert_decimal(data):
+            return Decimal(data)
+        sqlite.register_converter('decimal',convert_decimal)
 
         # date/time types handling
         if HAS_MX_DATETIME:
@@ -392,7 +403,9 @@ class _PySqlite2Adapter(DBAPIAdapter):
                 if kwargs is None:
                     self.__class__.__bases__[0].execute(self, sql)
                 else:
-                    self.__class__.__bases__[0].execute(self, self._replace_parameters(sql, kwargs), kwargs)
+                    final_sql = self._replace_parameters(sql, kwargs)
+                    self.__class__.__bases__[0].execute(self, final_sql , kwargs)
+
             def executemany(self, sql, kwargss):
                 if not isinstance(kwargss, (list, tuple)):
                     kwargss = tuple(kwargss)

@@ -130,6 +130,7 @@ class _GenericAdvFuncHelper:
         'String' :   'text',
         'Int' :      'integer',
         'Float' :    'float',
+        'Decimal' :  'decimal',
         'Boolean' :  'boolean',
         'Date' :     'date', 
         'Time' :     'time', 
