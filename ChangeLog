@@ -1,7 +1,7 @@
 ChangeLog for logilab.common
 ============================
 
-  --  
+2008-08-07  --  0.34.0
     * changelog propertly adds new line at the end of each entry
 
     * add a with_tempdir decorator ensuring all temporary files and dirs are removed
