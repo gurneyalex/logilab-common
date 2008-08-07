@@ -1,3 +1,9 @@
+logilab-common (0.34.0-1) unstable; urgency=low
+
+  * new upstream release
+
+ -- Nicolas Chauvat <nicolas.chauvat@logilab.fr>  Thu,  7 Aug 2008 19:15:00 +0200
+
 logilab-common (0.33.0-1) unstable; urgency=low
 
   * new upstream release
