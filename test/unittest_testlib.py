@@ -23,7 +23,7 @@ from unittest import TestSuite
 from logilab.common.testlib import TestCase, SkipAwareTextTestRunner
 from logilab.common.testlib import mock_object, NonStrictTestLoader, create_files
 from logilab.common.testlib import capture_stdout, unittest_main, InnerTest
-from logilab.common.testlib import with_tempdir
+from logilab.common.testlib import with_tempdir, tag
 
 class MockTestCase(TestCase):
     def __init__(self):
@@ -652,6 +652,43 @@ class DecoratorTC(TestCase):
         # assert temp directory is empty
         self.assertListEquals(list(os.walk(tempdir)),
             [(tempdir,[],[])])
+
+class TagTC(TestCase):
+
+    def setUp(self):
+        @tag('testing', 'bob')
+        def bob(a, b, c):
+            return (a + b) * c
+
+        self.func = bob
+
+    def test_tag_decorator(self):
+        bob = self.func
+        
+        self.assertEquals(bob(2, 3, 7), 35)
+        self.assertTrue(hasattr(bob, 'tags'))
+        self.assertSetEquals(bob.tags, set(['testing','bob']))
+
+
+    def test_tags_class(self):
+        tags = self.func.tags
+
+        self.assertTrue(tags['testing'])
+        self.assertFalse(tags['Not inside'])
+
+    def test_tags_match(self):
+        tags = self.func.tags
+
+        self.assertTrue(tags.match('testing'))
+        self.assertFalse(tags.match('other'))
+
+        self.assertFalse(tags.match('testing and coin'))
+        self.assertTrue(tags.match('testing or other'))
+
+        self.assertTrue(tags.match('not other'))
+
+        self.assertTrue(tags.match('not other or (testing and bibi)'))
+        self.assertTrue(tags.match('other or (testing and bob)'))
 
 if __name__ == '__main__':
     unittest_main()
