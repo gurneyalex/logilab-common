@@ -1696,3 +1696,35 @@ def enable_dbc(*args):
 class AttrObject: # XXX cf mock_object
     def __init__(self, **kwargs):
         self.__dict__.update(kwargs)
+
+
+#class Tagged(object):
+#    def __init__(self, tags, callable):
+#        self.__tag = tags
+#        self.__callable = callable
+#
+#    def __getttr__(self, attr):
+#        return getattr(self, attr)
+#
+#    def __setattr__(self, attr, value):
+#        return setattr(self.__callable, attr, value)
+
+def tag(*args):
+    """descriptor adding tag to a function"""
+    def desc(func):
+        assert not hasattr(func, 'tags')
+        setattr(func, 'tags', Tags(args))
+        return func
+    return desc
+
+
+
+class Tags(set):
+
+    def __getitem__(self, key):
+        return key in self
+
+        
+
+    def match(self, exp):
+        return eval(exp, {}, self)
