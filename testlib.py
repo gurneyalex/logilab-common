@@ -1716,18 +1716,6 @@ class AttrObject: # XXX cf mock_object
     def __init__(self, **kwargs):
         self.__dict__.update(kwargs)
 
-
-#class Tagged(object):
-#    def __init__(self, tags, callable):
-#        self.__tag = tags
-#        self.__callable = callable
-#
-#    def __getttr__(self, attr):
-#        return getattr(self, attr)
-#
-#    def __setattr__(self, attr, value):
-#        return setattr(self.__callable, attr, value)
-
 def tag(*args):
     """descriptor adding tag to a function"""
     def desc(func):
