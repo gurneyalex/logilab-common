@@ -55,6 +55,13 @@ except ImportError:
             pass
     test_support = TestSupport()
 
+try:
+    from pygments import highlight, lexers, formatters
+    # only print in color if executed from a terminal
+    PYGMENTS_FOUND = os.isatty
+except ImportError:
+    PYGMENTS_FOUND = False
+
 from logilab.common.deprecation import class_renamed, deprecated_function, \
      obsolete
 # pylint: disable-msg=W0622
@@ -401,6 +408,9 @@ class SkipAwareTestResult(unittest._TextTestResult):
 
     def printErrorList(self, flavour, errors):
         for (_, descr), (test, err) in zip(self.descrs_for(flavour), errors):
+            if PYGMENTS_FOUND:
+                err = highlight(err, lexers.PythonLexer(), 
+                    formatters.terminal.TerminalFormatter())
             self.stream.writeln(self.separator1)
             self.stream.writeln("%s: %s" % (flavour, descr))
             self.stream.writeln(self.separator2)
