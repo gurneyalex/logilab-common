@@ -420,7 +420,11 @@ class SkipAwareTestResult(unittest._TextTestResult):
                 self.stream.writeln("%s: %s" % (flavour, descr))
 
             self.stream.writeln(self.separator2)
-            self.stream.writeln("%s" % err.encode(sys.stdout.encoding, 'replace'))
+            if hasattr(sys.stdout, 'encoding'):
+                self.stream.writeln("%s" % err.encode(sys.stdout.encoding, 'replace'))
+            else:
+                self.stream.writeln(err)
+        
             try:
                 output, errput = test.captured_output()
             except AttributeError:
