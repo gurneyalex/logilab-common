@@ -78,13 +78,13 @@ def check_yn(option, opt, value):
     """check a yn value
     return true for yes and false for no
     """
+    if isinstance(value, int):
+        return bool(value)
     if value in ('y', 'yes'):
         return True
     if value in ('n', 'no'):
         return False
-    if value in (True, False):
-        return value
-    msg = "option %s: invalid yn value %r, should be True or False"
+    msg = "option %s: invalid yn value %r, should be in (y, yes, n, no)"
     raise OptionValueError(msg % (opt, value))
 
 def check_named(option, opt, value):
