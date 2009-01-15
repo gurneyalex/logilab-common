@@ -650,7 +650,7 @@ class NonStrictTestLoader(unittest.TestLoader):
             if (issubclass(type(obj), (types.ClassType, type)) and
                  issubclass(obj, unittest.TestCase)):
                 classname = obj.__name__
-                if self._this_is_skipped(classname):
+                if classname[0] == '_' or self._this_is_skipped(classname):
                     continue
                 methodnames = []
                 # obj is a TestCase class
@@ -715,7 +715,8 @@ class NonStrictTestLoader(unittest.TestLoader):
         """Return a sorted sequence of method names found within testCaseClass
         """
         is_skipped = self._this_is_skipped
-        if is_skipped(testCaseClass.__name__):
+        classname = testCaseClass.__name__
+        if classname[0] == '_' or is_skipped(classname):
             return []
         testnames = super(NonStrictTestLoader, self).getTestCaseNames(
                 testCaseClass)
@@ -825,14 +826,14 @@ Examples:
                 sys.exit(1)
         self.testRunner = SkipAwareTextTestRunner(verbosity=self.verbosity,
                                                   stream=self.outstream,
-                                        exitfirst=self.exitfirst,
-                                        capture=self.capture,
-                                        printonly=self.printonly,
-                                        pdbmode=self.pdbmode,
-                                        cvg=self.cvg,
-                                        test_pattern=self.test_pattern,
-                                        skipped_patterns=self.skipped_patterns,
-                                        options=self.options)
+                                                  exitfirst=self.exitfirst,
+                                                  capture=self.capture,
+                                                  printonly=self.printonly,
+                                                  pdbmode=self.pdbmode,
+                                                  cvg=self.cvg,
+                                                  test_pattern=self.test_pattern,
+                                                  skipped_patterns=self.skipped_patterns,
+                                                  options=self.options)
 
         def removeSucceededTests(obj, succTests):
             """ Recurcive function that removes succTests from

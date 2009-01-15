@@ -513,7 +513,7 @@ class TestLoaderTC(TestCase):
         for pattern, expected_count in data:
             yield self.assertRunCount, pattern, MyMod, expected_count
 
-    def tests_nonregr_class_skipped_option(self):
+    def test_nonregr_class_skipped_option(self):
         class MyMod:
             class MyTestCase(TestCase):
                 def test_foo(self): pass
@@ -525,7 +525,15 @@ class TestLoaderTC(TestCase):
         self.loader.skipped_patterns = self.runner.skipped_patterns = ['FooTC']
         self.assertRunCount('foo', MyMod, 1)
         self.assertRunCount(None, MyMod, 2)
-    
+
+    def test__classes_are_ignored(self):
+        class MyMod:
+            class _Base(TestCase):
+                def test_1(self): pass
+            class MyTestCase(_Base):
+                def test_2(self): pass
+        self.assertRunCount(None, MyMod, 2)
+            
 
 def bootstrap_print(msg, output=sys.stdout):
     """sys.stdout will be evaluated at function parsing time"""
