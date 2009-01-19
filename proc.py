@@ -11,6 +11,7 @@ __docformat__ = "restructuredtext en"
 
 import os
 from os.path import exists
+import stat
 
 from logilab.common.tree import Node
 
@@ -32,14 +33,14 @@ VSIZE = 22
 
 class ProcInfo(Node):
     """provide access to process information found in /proc"""
-    
+
     def __init__(self, pid):
-        Node.__init__(self, pid)
-        self.pid = pid
-        proc_exists(pid)
-        self.file = '/proc/%s/stat' % pid
+        self.pid = int(pid)
+        Node.__init__(self, self.pid)
+        proc_exists(self.pid)
+        self.file = '/proc/%s/stat' % self.pid
         self.ppid = int(self.status()[PPID])
-        
+
     def memory_usage(self):
         """return the memory usage of the process in Ko"""
         try :
@@ -63,7 +64,16 @@ class ProcInfo(Node):
         """return the list of fields found in /proc/<pid>/stat"""
         return open(self.file).read().split()
 
-    
+    def name(self):
+        """return the process name found in /proc/<pid>/stat
+        """
+        return self.status()[1].strip('()')
+
+    def age(self):
+        """return the age of the process
+        """
+        return os.stat(self.file)[stat.ST_MTIME]
+
 class ProcInfoLoader:
     """manage process information"""
     

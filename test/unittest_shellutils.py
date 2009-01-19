@@ -5,7 +5,8 @@ from os.path import join
 
 from logilab.common.testlib import TestCase, unittest_main
 
-from logilab.common.shellutils import globfind, find, ProgressBar
+from logilab.common.shellutils import globfind, find, ProgressBar, acquire_lock, release_lock
+from logilab.common.proc import NoSuchProcess
 from StringIO import StringIO
 
 DATA_DIR = join('data','find_test')
@@ -121,6 +122,32 @@ class ProgressBarTC(TestCase):
 
     def test_overflow(self):
         self._update_test(5, (8, 16, 25, 33, 42, (42, True)), size=42)
+
+
+class AcquireLockTC(TestCase):
+
+    def setUp(self):
+        self.tmpdir = tempfile.mkdtemp()
+        self.lock = join(self.tmpdir, 'LOCK')
+
+    def tearDown(self):
+        shutil.rmtree(self.tmpdir)
+
+    def test_acquire_normal(self):
+        self.assertTrue(acquire_lock(self.lock, 1, 1))
+        self.assertTrue(os.path.exists(self.lock))
+        release_lock(self.lock)
+        self.assertFalse(os.path.exists(self.lock))
+
+    def test_no_possible_acquire(self):
+        self.assertRaises(Exception, acquire_lock, self.lock, 0)
+
+    def test_wrong_process(self):
+        fd = os.open(self.lock, os.O_EXCL | os.O_RDWR | os.O_CREAT)
+        os.write(fd, '1111111111')
+        os.close(fd)
+        self.assertTrue(os.path.exists(self.lock))
+        self.assertRaises(NoSuchProcess, acquire_lock, self.lock)
 
 
 if __name__ == '__main__':
