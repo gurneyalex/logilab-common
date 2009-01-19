@@ -15,9 +15,11 @@ import sys
 import tempfile
 import time
 import fnmatch
+import errno
 from os.path import exists, isdir, islink, basename, join, walk
 
 from logilab.common import STD_BLACKLIST
+from logilab.common.proc import ProcInfo, NoSuchProcess
 
 
 def chown(path, login=None, group=None):
@@ -199,21 +201,37 @@ class Execute:
         os.remove(outfile)
         os.remove(errfile)
 
-
 def acquire_lock(lock_file, max_try=10, delay=10):
     """Acquire a lock represented by a file on the file system."""
-    count = 0
-    while max_try <= 0 or count < max_try:
-        if not exists(lock_file):
-            break
-        count += 1
-        time.sleep(delay)
+    count = abs(max_try)
+    while count:
+        try:
+            fd = os.open(lock_file, os.O_EXCL | os.O_RDWR | os.O_CREAT)
+            os.write(fd, str(os.getpid()))
+            os.close(fd)
+            return True
+        except OSError, e:
+            if e.errno == errno.EEXIST:
+                try:
+                    fd = open(lock_file, "r")
+                    pid = int(fd.readline())
+                    pi = ProcInfo(pid)
+                    # only print the message one time
+                    if count == max_try:
+                        diff = (int(time.time()) - pi.age()) / 60
+                        print("Command '%s' (pid %s) have locked the file '%s' for %s minutes.\nWaiting..." % (pi.name(), pid, lock_file, diff))
+                except NoSuchProcess:
+                    raise NoSuchProcess('You can delete the lock file "%s" safely' % lock_file)
+                except:
+                    # process information are not accessible
+                    pass
+            else:
+                raise
+            count -= 1
+            time.sleep(delay)
     else:
         raise Exception('Unable to acquire %s' % lock_file)
-    stream = open(lock_file, 'w')
-    stream.write(str(os.getpid()))
-    stream.close()
-    
+
 def release_lock(lock_file):
     """Release a lock represented by a file on the file system."""
     os.remove(lock_file)
