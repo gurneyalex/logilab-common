@@ -409,7 +409,7 @@ class SkipAwareTestResult(unittest._TextTestResult):
                             output.append('      self.%s: %r' % (varname, value))
                 output.append('    ' + '-' * 66)
                 output.append('')
-        output.append('%s: %s' % (exctype.__name__, exc))
+        output.append(''.join(traceback.format_exception_only(exctype, exc)))
         return '\n'.join(output)
 
     def addError(self, test, err):
