@@ -14,27 +14,38 @@
 build: build-stamp
 build-stamp: 
 	dh_testdir
+	
+	# python module build
 	python setup.py -q build
+
+	# build doc
+	$(MAKE) -C doc
+
 	touch build-stamp
 
 clean: 
 	dh_testdir
 	dh_testroot
-	rm -f build-stamp configure-stamp
-	rm -rf build
-	find . -name "*.pyc" | xargs rm -f
-	rm -f changelog.gz
-	dh_clean
+	
+	# clean doc
+	$(MAKE) -C doc clean
+
+	python setup.py clean
+
+	find . -name "*.pyc" -delete
+
+	dh_clean build-stamp build
 
 install: build
 	dh_testdir
 	dh_testroot
 	dh_clean -k
 	dh_installdirs
+
 	python setup.py -q install --no-compile --prefix=debian/python-logilab-common/usr/ --install-headers=debian/python-logilab-common/usr/include/ --install-scripts=debian/python-logilab-common/usr/bin
+
 	# remove test directory (installed in in the doc directory)
 	rm -rf debian/python-logilab-common/usr/lib/python*/site-packages/logilab/common/test
-
 
 # Build architecture-independent files here.
 binary-indep: build install
@@ -42,14 +53,12 @@ binary-indep: build install
 	dh_testroot 
 	dh_install -i
 	dh_pycentral -i 
-	gzip -9 -c ChangeLog > changelog.gz
-	dh_installchangelogs -i
+	dh_installchangelogs -i ChangeLog
 	dh_installexamples -i
-	dh_installdocs -i README changelog.gz
+	dh_installdocs -i 	README doc/apidoc/
 	dh_installman -i
 	dh_link -i
-	dh_compress -i -X.py -X.ini -X.xml -Xtest  
-	gzip -9 debian/python-logilab-common/usr/share/man/man1/pytest.1
+	dh_compress -i		-X.py -X.ini -X.xml -Xtest/ -Xapidoc/
 	dh_fixperms -i
 	dh_installdeb -i
 	dh_gencontrol -i 

@@ -1,26 +1,61 @@
-logilab-common (0.37.2-1) DISTRIBUTION; urgency=low
+logilab-common (0.37.2-2) unstable; urgency=low
+
+  * Merged Sandro Tosi's changes with Logilab's evolution of the package
+  * Published the resulting package to Debian
+
+ -- Alexandre Fayolle <afayolle@debian.org>  Tue, 20 Jan 2009 16:32:13 +0100
+
+logilab-common (0.37.2-1) unstable; urgency=low
 
   * new upstream release
 
  -- Sylvain Thénault <sylvain.thenault@logilab.fr>  Thu, 08 Jan 2009 14:00:41 +0100
 
-logilab-common (0.37.1-1) DISTRIBUTION; urgency=low
+logilab-common (0.37.1-1) unstable; urgency=low
 
   * new upstream release
 
  -- Adrien Di Mascio <Adrien.DiMascio@logilab.fr>  Thu, 11 Dec 2008 16:07:02 +0100
 
-logilab-common (0.37.0-1) DISTRIBUTION; urgency=low
+logilab-common (0.37.0-1) unstable; urgency=low
 
   * new upstream release
 
  -- Adrien Di Mascio <Adrien.DiMascio@logilab.fr>  Tue, 09 Dec 2008 10:56:23 +0100
 
-logilab-common (0.36.1-1) DISTRIBUTION; urgency=low
+logilab-common (0.36.1-1) unstable; urgency=low
 
-  * new upstream release
+  * New upstream release
+  * debian/control
+    - adopted under DPMT umbrella (in agreement with Alexandre Fayolle) 
+    - bump Standards-Version to 3.8.0 (no changes needed)
+    - added Vcs-{Svn,Browser} field
+    - replace 'python' with ${python:Depends} and added ${misc:Depends} to
+      Depends
+    - added python-epydoc and graphviz to build-dep-indep (to build doc)
+    - moved python to build-dep (needed for clean)
+  * debian/pycompat
+    - removed since no more needed
+  * debian/rules
+    - install upstream 'Changelog' using dh_installchangelog
+    - added build, clean and install for documentation
+    - no need to recompress man page
+    - using '-delete' find option instead of xargs
+    - call "python setup.py clean" in clean target
+    - merge 'rm' calls into dh_clean
+    - don't compress files under 'test/' and 'apidoc/' dirs
+  * debian/python-logilab-common.{postinst,preinst,prerm}
+    - removed since not needed
+  * debian/python-logilab-common.docs
+    - removed: installed non-existing files, using debian/rules
+  * debian/copyright
+    - added a clear license section, referring simply to GPLv2, since every file
+      is license only GPLv2, hence updating the local license text file too
+    - indented upstream author, copyright and license with 4 spaces
+    - extended copyright year (starting from 2000, previous 2003, due to
+      'table.py' et alter)
 
- -- Nicolas Chauvat <nicolas.chauvat@logilab.fr>  Fri, 14 Nov 2008 13:22:04 +0100
+ -- Sandro Tosi <morph@debian.org>  Sun, 30 Nov 2008 15:08:25 +0100
 
 logilab-common (0.36.0-1) unstable; urgency=low
 
