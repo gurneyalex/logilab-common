@@ -723,6 +723,8 @@ class OptionsProviderMixIn(object):
                 setattr(self.config, opt_name, _list + (value,))
             else:
                 _list.append(value)
+        elif action == 'callback':
+            opt_dict['callback'](None, opt_name, value, None)
         else:
             raise UnsupportedAction(action)
 
