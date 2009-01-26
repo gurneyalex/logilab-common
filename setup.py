@@ -166,6 +166,10 @@ class MyInstallLib(install_lib.install_lib):
         
 def install(**kwargs):
     """setup entry point"""
+    try:
+        sys.argv.remove('--force-manifest')
+    except:
+        pass
     if subpackage_of:
         package = subpackage_of + '.' + modname
         kwargs['package_dir'] = {package : '.'}
