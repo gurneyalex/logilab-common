@@ -14,22 +14,27 @@ import os.path as osp
 class ModuleGenerator:
 
     file_header = """.. -*- coding: utf-8 -*- \n\n%s\n"""
-    def __init__(self, project_title, output_fn, mod_names, exclude_dirs):
-        self.mod_names =  mod_names
-        self.fn = open(output_fn, 'w')
-        num = len(project_title) + 6
-        title = "=" * num + "\n %s API\n" % project_title + "=" * num
-        self.fn.write(self.file_header % title)
-        self.exclude_dirs = exclude_dirs
+    def __init__(self, project_title, code_dir, dest_file):
+        self.main_dir = code_dir
+        self.dest_file = dest_file
+        self.set_docdir()
+        self.mod_names = []
+        self.title = project_title
 
-    def make(self):
+    def set_docdir(self, subfolder =""):
+        """set the directory for the destination path"""
+        self.output_fn = osp.join(self.main_dir, subfolder, self.dest_file)
+
+    def make(self, mod_names, exclude_dirs):
         """make the module file"""
+        self.mod_names = [osp.join(self.main_dir, name) for name in mod_names]
+        self.exclude_dirs = exclude_dirs
+        self.fn = open(self.output_fn, 'w')
+        num = len(self.title) + 6
+        title = "=" * num + "\n %s API\n" % self.title + "=" * num
+        self.fn.write(self.file_header % title)
         self.find_modules()
         self.gen_modules()
-        self.done()
-
-    def done(self):
-        """close the file with the listed modules"""
         self.fn.close()
 
     def gen_modules(self):
@@ -76,4 +81,32 @@ class ModuleGenerator:
             if mod_end.find(dir) != -1:
                 return False
         return True
+
+
+def generate_modules_file(args):
+    """generate all module files"""
+    # TODO : use lgc options
+    if len(args) != 3:
+
+        print """
+Two arguments required:
+    generate_modules [project-title] [code-dir] [file-out]
+
+[project-title] : title of the project to be documented
+[code-dir] : full path to the code directory
+[file-out] : rest file containing the list of modules for Sphinx
+"""
+        sys.exit()
+    project_title = args[0]
+    code_dir = args[1]
+    destfile = args[2]
+    mg = ModuleGenerator(project_title, code_dir, destfile)
+    return mg
+
+if __name__ == '__main__':
+    # example :
+    mg = generate_modules_file(sys.argv[1:])
+    modnames = ['logilab']
+    exclude = ('test', 'tests', 'examples', 'data', 'doc', '.hg', 'migration')
+    mg.make(mod_names, exclude)
 
