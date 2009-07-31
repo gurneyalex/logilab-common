@@ -307,15 +307,17 @@ class RawInput(object):
         tries = 3
         while tries > 0:
             answer = self._input(prompt).strip().lower()
-            if answer:
-                possible = [option for option, label in choices
-                            if option.lower().startswith(answer)]
-                if len(possible) == 1:
-                    return possible[0]
-            else:
+            if not answer:
                 return default
-            msg = ('%s is an ambiguous answer, do you mean %s ?' % (
-                    answer, ' or '.join(possible)))
+            possible = [option for option, label in choices
+                        if option.lower().startswith(answer)]
+            if len(possible) == 1:
+                return possible[0]
+            elif len(possible) == 0:
+                msg = '%s is not an option.' % answer
+            else:
+                msg = ('%s is an ambiguous answer, do you mean %s ?' % (
+                        answer, ' or '.join(possible)))
             if self._print:
                 self._print(msg)
             else:
