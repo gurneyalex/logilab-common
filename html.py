@@ -96,7 +96,7 @@ def render_HTML_tree(tree, selected_node=None, render_node=None, caption=None):
             cell = line[j]
             if cell:
                 if cell.id == selected_node:
-                    s += '<td class="tree_cell" rowspan="2"><div id="selected" class="tree_cell">%s</div></td>' % (render_node(cell.id))
+                    s += '<td class="tree_cell" rowspan="2"><div class="selected tree_cell">%s</div></td>' % (render_node(cell.id))
                 else:
                     s += '<td class="tree_cell" rowspan="2"><div class="tree_cell">%s</div></td>' % (render_node(cell.id))
             else:
@@ -107,7 +107,7 @@ def render_HTML_tree(tree, selected_node=None, render_node=None, caption=None):
         cell = line[-1]
         if cell:
             if cell.id == selected_node:
-                s += '<td class="tree_cell" rowspan="2"><div id="selected" class="tree_cell">%s</div></td>' % (render_node(cell.id))
+                s += '<td class="tree_cell" rowspan="2"><div class="selected tree_cell">%s</div></td>' % (render_node(cell.id))
             else:
                 s += '<td class="tree_cell" rowspan="2"><div class="tree_cell">%s</div></td>' % (render_node(cell.id))
         else:
