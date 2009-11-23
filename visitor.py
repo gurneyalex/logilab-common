@@ -35,7 +35,7 @@ class Visitor(object):
         """
         launch the visit on a given node
 
-        call 'open_visit' before the begining of the visit, with extra args
+        call 'open_visit' before the beginning of the visit, with extra args
         given
         when all nodes have been visited, call the 'close_visit' method
         """

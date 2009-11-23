@@ -86,7 +86,7 @@ class ProcInfoLoader:
         self._loaded = {}
 
     def list_pids(self):
-        """return a list of existant process ids"""
+        """return a list of existent process ids"""
         for subdir in os.listdir('/proc'):
             if subdir.isdigit():
                 yield int(subdir)
@@ -118,15 +118,15 @@ class ProcInfoLoader:
 try:
     class ResourceError(BaseException):
         """Error raise when resource limit is reached"""
-        limit = "Unknow Resource Limit"
+        limit = "Unknown Resource Limit"
 except NameError:
     class ResourceError(Exception):
         """Error raise when resource limit is reached"""
-        limit = "Unknow Resource Limit"
+        limit = "Unknown Resource Limit"
 
 
 class XCPUError(ResourceError):
-    """Error raised when CPU Time limite is reached"""
+    """Error raised when CPU Time limit is reached"""
     limit = "CPU Time"
 
 class LineageMemoryError(ResourceError):

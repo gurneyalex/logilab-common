@@ -81,7 +81,7 @@ def register_commands(commands):
 
 
 def main_usage(status=0, __doc__=DEFAULT_DOC, copyright=DEFAULT_COPYRIGHT):
-    """display usage for the main program (ie when no command supplied)
+    """display usage for the main program (i.e. when no command supplied)
     and exit
     """
     commands = _COMMANDS.keys()

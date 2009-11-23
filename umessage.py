@@ -113,7 +113,7 @@ class UMessage:
 
     def multi_addrs(self, header):
         """return a list of 2-uple (name, address) for the given address (which
-        is exepected to be an header containing address such as from, to, cc...)
+        is expected to be an header containing address such as from, to, cc...)
         """
         persons = []
         for person in self.get_all(header, ()):

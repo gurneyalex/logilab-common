@@ -69,7 +69,7 @@ except NameError:
                 return iter(self._data)
 
         class frozenset(_baseset):
-            """immutable set (can be set in dictionnaries)"""
+            """immutable set (can be set in dictionaries)"""
             def __init__(self, values=()):
                 super(frozenset, self).__init__(values)
                 self._hashcode = None
@@ -107,10 +107,10 @@ except NameError:
                 return self._data.popitem()[0]
 
             def __hash__(self):
-                """mutable et cannot be hashed."""
+                """mutable set cannot be hashed."""
                 raise TypeError("set objects are not hashable")
 
-        del _baseset # don't explicity provide this class
+        del _baseset # don't explicitly provide this class
 
 try:
     from itertools import izip, chain, imap

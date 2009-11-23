@@ -153,7 +153,7 @@ class Debugger(Pdb):
                 ret = ret + self.get_class_members(base)
         return ret
 
-    ## specific / overidden commands
+    ## specific / overridden commands
     def do_list(self, arg):
         """overrides default list command to display the surrounding block
         instead of 5 lines of context

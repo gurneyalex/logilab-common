@@ -68,7 +68,7 @@ With those tag::
         def titi(test):
             pass
 
-you can filter the function with a simpe python expression
+you can filter the function with a simple python expression
 
  * ``toto`` and ``titi`` match ``rouge``
 
@@ -317,7 +317,7 @@ def remove_local_modules_from_sys(testdir):
             # this is the case of some built-in modules like sys, imp, marshal
             continue
         modfile = mod.__file__
-        # if modfile is not an asbolute path, it was probably loaded locally
+        # if modfile is not an absolute path, it was probably loaded locally
         # during the tests
         if not osp.isabs(modfile) or modfile.startswith(testdir):
             del sys.modules[modname]
@@ -325,7 +325,7 @@ def remove_local_modules_from_sys(testdir):
 
 
 class PyTester(object):
-    """encaspulates testrun logic"""
+    """encapsulates testrun logic"""
 
     def __init__(self, cvg, options):
         self.report = GlobalTestReport()
@@ -341,7 +341,7 @@ class PyTester(object):
         print self.report
 
     def get_errcode(self):
-        # errcode set explicity
+        # errcode set explicitly
         if self._errcode is not None:
             return self._errcode
         return self.report.failures + self.report.errors
@@ -351,7 +351,7 @@ class PyTester(object):
     errcode = property(get_errcode, set_errcode)
 
     def testall(self, exitfirst=False):
-        """walks trhough current working directory, finds something
+        """walks through current working directory, finds something
         which can be considered as a testdir and runs every test there
         """
         here = os.getcwd()
@@ -433,7 +433,7 @@ succeeded test file :", osp.join(os.getcwd(),testlib.FILE_RESTART)
                 return None
             except Exception:
                 self.report.failed_to_test_module(filename)
-                print >> sys.stderr, 'unhandled exception occured while testing', modname
+                print >> sys.stderr, 'unhandled exception occurred while testing', modname
                 import traceback
                 traceback.print_exc(file=sys.stderr)
                 return None
@@ -490,7 +490,7 @@ class DjangoTester(PyTester):
 
 
     def testall(self, exitfirst=False):
-        """walks trhough current working directory, finds something
+        """walks through current working directory, finds something
         which can be considered as a testdir and runs every test there
         """
         for dirname, dirs, _ in os.walk(os.getcwd()):
@@ -511,7 +511,7 @@ class DjangoTester(PyTester):
 
     def testonedir(self, testdir, exitfirst=False):
         """finds each testfile in the `testdir` and runs it"""
-        # special django behaviour : if tests are splited in several files,
+        # special django behaviour : if tests are splitted in several files,
         # remove the main tests.py file and tests each test file separately
         testfiles = [fpath for fpath in abspath_listdir(testdir)
                      if this_is_a_testfile(fpath)]
@@ -556,7 +556,7 @@ class DjangoTester(PyTester):
                 import traceback
                 traceback.print_exc()
                 self.report.failed_to_test_module(filename)
-                print 'unhandled exception occured while testing', modname
+                print 'unhandled exception occurred while testing', modname
                 print 'error: %s' % exc
                 return None
         finally:
@@ -633,7 +633,7 @@ def make_parser():
     parser.add_option('-P', '--profile', default=None, dest='profile',
                       help="Profile execution and store data in the given file")
     parser.add_option('-m', '--match', default=None, dest='tags_pattern',
-                      help="only execute test whose tag macht the current pattern")
+                      help="only execute test whose tag match the current pattern")
 
     try:
         from logilab.devtools.lib.coverage import Coverage

@@ -34,14 +34,14 @@ If it i not the case, remove the file %s''' % (self.name, self._pid_file))
             # fork so the parent can exist
             if (os.fork()):
                 return -1
-            # deconnect from tty and create a new session
+            # disconnect from tty and create a new session
             os.setsid()
             # fork again so the parent, (the session group leader), can exit.
             # as a non-session group leader, we can never regain a controlling
             # terminal.
             if (os.fork()):
                 return -1
-            # move to the root to avoit mount pb
+            # move to the root to avoid mount pb
             os.chdir('/')
             # set paranoid umask
             os.umask(077)
@@ -58,8 +58,8 @@ If it i not the case, remove the file %s''' % (self.name, self._pid_file))
             signal.signal(signal.SIGHUP, self.signal_handler)
 
     def run(self):
-        """ optionaly go in daemon mode and
-        do what concrete classe has to do and pauses for delay between runs
+        """ optionally go in daemon mode and
+        do what concrete class has to do and pauses for delay between runs
         If self.delay is negative, do a pause before starting
         """
         if self._daemonize() == -1:
@@ -101,7 +101,7 @@ If it i not the case, remove the file %s''' % (self.name, self._pid_file))
             reload(self.config)
 
     def _run(self):
-        """should be overidden in the mixed class"""
+        """should be overridden in the mixed class"""
         raise NotImplementedError()
 
 ## command line utilities ######################################################

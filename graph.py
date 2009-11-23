@@ -1,4 +1,4 @@
-"""Graph manipuliation utilities.
+"""Graph manipulation utilities.
 
 (dot generation adapted from pypy/translator/tool/make_dot.py)
 

@@ -16,7 +16,7 @@ from logilab.common.textutils import colorize_ansi
 
 
 def set_log_methods(cls, logger):
-    """bind standart logger's methods as methods on the class"""
+    """bind standard logger's methods as methods on the class"""
     cls.__logger = logger
     for attr in ('debug', 'info', 'warning', 'error', 'critical', 'exception'):
         setattr(cls, attr, getattr(logger, attr))
@@ -33,7 +33,7 @@ class ColorFormatter(logging.Formatter):
     By default, colorize CRITICAL and ERROR in red, WARNING in orange, INFO in
     green and DEBUG in yellow.
 
-    self.colors is customizable via the 'color' constructor argument (dictionnary).
+    self.colors is customizable via the 'color' constructor argument (dictionary).
 
     self.colorfilters is a list of functions that get the LogRecord
     and return a color name or None.

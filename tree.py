@@ -24,7 +24,7 @@ EX_NODE_NOT_FOUND = "No such node as '%s'"
 # Base node ###################################################################
 
 class Node(object):
-    """a basic tree node, caracterised by an id"""
+    """a basic tree node, characterized by an id"""
 
     def __init__(self, nid=None) :
         self.id = nid
@@ -218,7 +218,7 @@ class VNode(Node, VisitedMixIn):
 
 
 class BinaryNode(VNode):
-    """a binary node (ie only two children
+    """a binary node (i.e. only two children
     """
     def __init__(self, lhs=None, rhs=None) :
         VNode.__init__(self)
@@ -348,7 +348,7 @@ class PostfixedDepthFirstIterator(FilteredIterator):
         FilteredIterator.__init__(self, node, post_order_list, filter_func)
 
 class PrefixedDepthFirstIterator(FilteredIterator):
-    """a pretfixed depth first iterator, designed to be used with visitors
+    """a prefixed depth first iterator, designed to be used with visitors
     """
     def __init__(self, node, filter_func=None):
         FilteredIterator.__init__(self, node, pre_order_list, filter_func)

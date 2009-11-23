@@ -51,7 +51,7 @@ def init_readline(complete_method, histfile=None):
             import atexit
             atexit.register(readline.write_history_file, histfile)
     except:
-        print 'readline si not available :-('
+        print 'readline is not available :-('
 
 
 class Completer :
@@ -119,7 +119,7 @@ class CLIHelper:
 
     def handle_line(self, stripped_line):
         """Method to overload in the concrete class (should handle
-        lines wich are not commands).
+        lines which are not commands).
         """
         raise NotImplementedError()
 

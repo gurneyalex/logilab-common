@@ -9,7 +9,7 @@ Sample ChangeLog format::
   ==========================
 
    --
-      * add a new functionnality
+      * add a new functionality
 
   2002-02-01 -- 0.1.1
       * fix bug #435454
@@ -66,7 +66,7 @@ class Version(tuple):
 # upstream change log #########################################################
 
 class ChangeLogEntry(object):
-    """a change log entry, ie a set of messages associated to a version and
+    """a change log entry, i.e. a set of messages associated to a version and
     its release date
     """
     version_class = Version
@@ -100,7 +100,7 @@ class ChangeLogEntry(object):
         if key is None:
             self.messages[-1][1].append([sub_msg])
         else:
-            raise NotImplementedError("sub message to specific key are not impemented yet")
+            raise NotImplementedError("sub message to specific key are not implemented yet")
 
     def write(self, stream=sys.stdout):
         """write the entry to file """
@@ -139,7 +139,7 @@ class ChangeLog(object):
 
     def get_entry(self, version='', create=None):
         """ return a given changelog entry
-        if version is omited, return the current entry
+        if version is omitted, return the current entry
         """
         if not self.entries:
             if version or not create:

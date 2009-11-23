@@ -40,7 +40,7 @@ Here is a brief description of the available modules :
 * bind.py :
   Deprecated module. 
   Provides a way to optimize globals in certain functions by binding
-  their names to values provided in a dictionnary.
+  their names to values provided in a dictionary.
 
 * cache.py :
   A cache implementation with a least recently used algorithm.
@@ -61,7 +61,7 @@ Here is a brief description of the available modules :
   (using optik/optparse) and configuration file.
 
 * corbautils.py:
-  Usefull functions for use with the OmniORB CORBA library.
+  Useful functions for use with the OmniORB CORBA library.
 
 * daemon.py :
   A daemon mix-in class.

@@ -369,7 +369,7 @@ class OptionsManagerMixIn(object):
         self.reset_parsers(usage, version=version)
         # list of registered options providers
         self.options_providers = []
-        # dictionary assocating option name to checker
+        # dictionary associating option name to checker
         self._all_options = {}
         self._short_options = {}
         self._nocallback_options = {}
@@ -534,7 +534,7 @@ class OptionsManagerMixIn(object):
         self.load_config_file()
 
     def read_config_file(self, config_file=None):
-        """read the configuration file but do not load it (ie dispatching
+        """read the configuration file but do not load it (i.e. dispatching
         values to each options provider)
         """
         if config_file is None:
@@ -554,7 +554,7 @@ class OptionsManagerMixIn(object):
             return
 
     def input_config(self, onlysection=None, inputlevel=0, stream=None):
-        """interactivly get configuration values by asking to the user and generate
+        """interactively get configuration values by asking to the user and generate
         a configuration file
         """
         if onlysection is not None:

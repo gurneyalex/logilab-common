@@ -57,7 +57,7 @@ class OptionParser(optparse.OptionParser):
             elif self.version is not None and cmd == "--version":
                 self.print_version()
                 sys.exit(0)
-            self.error('unknow command')
+            self.error('unknown command')
         self.prog = '%s %s' % (self.prog, cmd)
         mod_or_f, help = self._commands[cmd]
         # optparse inserts self.description between usage and options help

@@ -113,7 +113,7 @@ def run_tests(tests, quiet, verbose, runner=None, capture=0):
             print "Executing", test
         result = run_test(test, verbose, runner, capture)
         if type(result) is type(''):
-            # an unexpected error occured
+            # an unexpected error occurred
             skipped.append( (test, result))
         else:
             if all_result is None:
@@ -769,7 +769,7 @@ Examples:
                                                   options=self.options)
 
         def removeSucceededTests(obj, succTests):
-            """ Recurcive function that removes succTests from
+            """ Recursive function that removes succTests from
             a TestSuite or TestCase
             """
             if isinstance(obj, TestSuite):
@@ -905,7 +905,7 @@ def capture_stderr(printonly=None):
 def unittest_main(module='__main__', defaultTest=None,
                   batchmode=False, cvg=None, options=None,
                   outstream=sys.stderr):
-    """use this functon if you want to have the same functionality
+    """use this function if you want to have the same functionality
     as unittest.main"""
     return SkipAwareTestProgram(module, defaultTest, batchmode,
                                 cvg, options, outstream)
@@ -1339,7 +1339,7 @@ succeeded test into", osp.join(os.getcwd(),FILE_RESTART)
                 self.fail( "tuple %s has no attributes (%s expected)"%(tup,
                     dict(element.attrib)))
             self.assertDictEquals(element.attrib, tup[1])
-        # check childrend
+        # check children
         if len(element) or len(tup)>2:
             if len(tup)<=2:
                 self.fail( "tuple %s has no children (%i expected)"%(tup,
@@ -1398,7 +1398,7 @@ succeeded test into", osp.join(os.getcwd(),FILE_RESTART)
         # make sure we compare from the beginning of the stream
         stream1.seek(0)
         stream2.seek(0)
-        # ocmpare
+        # compare
         self._difftext(stream1.readlines(), stream2.readlines(), junk,
              msg_prefix)
 
@@ -1768,7 +1768,7 @@ class Tags(set):
         return eval(exp, {}, self)
 
 def require_version(version):
-    """ Compare version of python interpretor to the given one. Skip the test
+    """ Compare version of python interpreter to the given one. Skip the test
     if older.
     """
     def check_require_version(f):

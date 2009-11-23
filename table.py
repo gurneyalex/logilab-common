@@ -105,7 +105,7 @@ class Table(object):
 
     def groupby(self, colname, *others):
         """builds indexes of data
-        :returns: nested dictionnaries pointing to actual rows
+        :returns: nested dictionaries pointing to actual rows
         """
         groups = {}
         colnames = (colname,) + others
@@ -418,7 +418,7 @@ class Table(object):
         """returns a string representing the table in a pretty
         printed 'text' format.
         """
-        # The maxium row name (to know the start_index of the first col)
+        # The maximum row name (to know the start_index of the first col)
         max_row_name = 0
         for row_name in self.row_names:
             if len(row_name) > max_row_name:

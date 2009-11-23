@@ -46,7 +46,7 @@ class SQLGenerator :
     def insert(self, table, params) :
         """
         :param table: name of the table
-        :param params:  dictionnary that will be used as in cursor.execute(sql,params)
+        :param params:  dictionary that will be used as in cursor.execute(sql,params)
 
         >>> s = SQLGenerator()
         >>> s.insert('test',{'nom':'dupont'})
@@ -62,7 +62,7 @@ class SQLGenerator :
     def select(self, table, params) :
         """
         :param table: name of the table
-        :param params:  dictionnary that will be used as in cursor.execute(sql,params)
+        :param params:  dictionary that will be used as in cursor.execute(sql,params)
 
         >>> s = SQLGenerator()
         >>> s.select('test',{})
@@ -82,7 +82,7 @@ class SQLGenerator :
         """
         :param model:  list of columns to select
         :param tables: list of tables used in from
-        :param params: dictionnary that will be used as in cursor.execute(sql, params)
+        :param params: dictionary that will be used as in cursor.execute(sql, params)
         :param joins:  optional list of restriction statements to insert in the
           where clause. Usually used to perform joins.
 
@@ -104,7 +104,7 @@ class SQLGenerator :
     def delete(self, table, params) :
         """
         :param table: name of the table
-        :param params: dictionnary that will be used as in cursor.execute(sql,params)
+        :param params: dictionary that will be used as in cursor.execute(sql,params)
 
         >>> s = SQLGenerator()
         >>> s.delete('test',{'nom':'dupont'})
@@ -119,7 +119,7 @@ class SQLGenerator :
     def update(self, table, params, unique) :
         """
         :param table: name of the table
-        :param params: dictionnary that will be used as in cursor.execute(sql,params)
+        :param params: dictionary that will be used as in cursor.execute(sql,params)
 
         >>> s = SQLGenerator()
         >>> s.update('test', {'id':'001','nom':'dupont'}, ['id'])
@@ -202,7 +202,7 @@ class BaseTable:
 def name_fields(cursor, records) :
     """
     Take a cursor and a list of records fetched with that cursor, then return a
-    list of dictionnaries (one for each record) whose keys are column names and
+    list of dictionaries (one for each record) whose keys are column names and
     values are records' values.
 
     :param cursor: cursor used to execute the query

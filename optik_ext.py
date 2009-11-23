@@ -110,7 +110,7 @@ def check_yn(option, opt, value):
 
 def check_named(option, opt, value):
     """check a named value
-    return a dictionnary containing (name, value) associations
+    return a dictionary containing (name, value) associations
     """
     if isinstance(value, dict):
         return value
@@ -165,7 +165,7 @@ def check_color(option, opt, value):
         return value
     # Else : not a color label neither a valid hexadecimal form => error
     msg = "option %s: invalid color : %r, should be either hexadecimal \
-    value or predefinied color"
+    value or predefined color"
     raise OptionValueError(msg % (opt, value))
 
 def check_time(option, opt, value):

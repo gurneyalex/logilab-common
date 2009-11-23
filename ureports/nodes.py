@@ -102,7 +102,7 @@ class Link(BaseComponent):
 
 
 class Image(BaseComponent):
-    """an embeded or a single image
+    """an embedded or a single image
 
     attributes :
     * BaseComponent attributes

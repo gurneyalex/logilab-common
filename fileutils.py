@@ -71,7 +71,7 @@ def is_binary(filename):
     :rtype: bool
     :return:
       true if the file is a binary file (actually if it's mime type
-      isn't begining by text/)
+      isn't beginning by text/)
     """
     try:
         return not mimetypes.guess_type(filename)[0].startswith('text')
@@ -125,7 +125,7 @@ class ProtectedFile(file):
 
     - if IOError, then create a StringIO object
 
-    - each write operation writes in this StringIO obejct
+    - each write operation writes in this StringIO object
 
     - on close()/del(), write/append the StringIO content to the file and
       do the chmod only once
@@ -162,7 +162,7 @@ class UnresolvableError(Exception):
     """
 
 def relative_path(from_file, to_file):
-    """Try to get a relative path from from `from_file` to `to_file`
+    """Try to get a relative path from `from_file` to `to_file`
     (path will be absolute if to_file is an absolute file). This function
     is useful to create link in `from_file` to `to_file`. This typical use
     case is used in this function description.
@@ -270,7 +270,7 @@ def lines(path, comments=None):
     :type comments: str or None
     :param comments:
       optional string which can be used to comment a line in the file
-      (ie lines starting with this string won't be returned)
+      (i.e. lines starting with this string won't be returned)
 
     :rtype: list
     :return:
@@ -294,7 +294,7 @@ def stream_lines(stream, comments=None):
     :type comments: str or None
     :param comments:
       optional string which can be used to comment a line in the file
-      (ie lines starting with this string won't be returned)
+      (i.e. lines starting with this string won't be returned)
 
     :rtype: list
     :return:
@@ -340,7 +340,7 @@ def export(from_dir, to_dir,
 
     :type verbose: bool
     :param verbose:
-      flag indicating wether information about exported files should be
+      flag indicating whether information about exported files should be
       printed to stderr, default to False
     """
     def make_mirror(_, directory, fnames):
@@ -375,14 +375,14 @@ def export(from_dir, to_dir,
 
 
 def remove_dead_links(directory, verbose=0):
-    """Recursivly traverse directory and remove all dead links.
+    """Recursively traverse directory and remove all dead links.
 
     :type directory: str
     :param directory: directory to cleanup
 
     :type verbose: bool
     :param verbose:
-      flag indicating wether information about deleted links should be
+      flag indicating whether information about deleted links should be
       printed to stderr, default to False
     """
     def _remove_dead_link(_, directory, fnames):

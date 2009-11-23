@@ -188,7 +188,7 @@ def modpath_from_file(filename, extrapath=None):
     :type extrapath: dict
     :param extrapath:
       optional extra search path, with path as key and package name for the path
-      as value. This is usually useful to handle package splited in multiple
+      as value. This is usually useful to handle package splitted in multiple
       directories using __path__ trick.
 
 
@@ -222,7 +222,7 @@ def modpath_from_file(filename, extrapath=None):
 
 
 def file_from_modpath(modpath, path=None, context_file=None):
-    """given a mod path (ie splited module / package name), return the
+    """given a mod path (i.e. splitted module / package name), return the
     corresponding file, giving priority to source file over precompiled
     file if it exists
 
@@ -518,7 +518,7 @@ def is_relative(modname, from_file):
 
     :rtype: bool
     :return:
-      true if the module has been imported relativly to `from_file`
+      true if the module has been imported relatively to `from_file`
     """
     if not isdir(from_file):
         from_file = dirname(from_file)
@@ -534,7 +534,7 @@ def is_relative(modname, from_file):
 # internal only functions #####################################################
 
 def _file_from_modpath(modpath, path=None, context=None):
-    """given a mod path (ie splited module / package name), return the
+    """given a mod path (i.e. splitted module / package name), return the
     corresponding file
 
     this function is used internally, see `file_from_modpath`'s

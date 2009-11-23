@@ -172,7 +172,7 @@ ChangeLog for logilab.common
 
 
 2008-09-10  --  0.35.0
-    * fix #5945: wrong edge proporties in graph.DotBackend
+    * fix #5945: wrong edge properties in graph.DotBackend
 
     * testlib: filter tests with tag decorator
 
@@ -186,7 +186,7 @@ ChangeLog for logilab.common
     * testlib: add a with_tempdir decorator ensuring all temporary files and dirs are removed
 
     * graph: improve DotBackend configuration. graphiz rendered can now be selected
-      and additionnal graph parameter used
+      and additional graph parameter used
 
     * db: support of Decimal Type
 
@@ -202,7 +202,7 @@ ChangeLog for logilab.common
       - added assertIsNot, assertNone and assertNotNone assertion
       - added assertUnorderedIterableEquals
       - added assertDirEquals
-      - various failure ouput improvement
+      - various failure output improvement
 
     * umessage: umessage.date() may return unparsable string as is instead of None
 
@@ -213,7 +213,7 @@ ChangeLog for logilab.common
 
 
 2008-06-08  --  0.32.0
-    * textutils: add the apply_unit fonction
+    * textutils: add the apply_unit function
 
     * testlib:
       - added a assertXMLEqualsTuple test assertion
@@ -233,7 +233,7 @@ ChangeLog for logilab.common
 2008-03-26  --  0.30.0
     * db: remember logged user on the connection
 
-    * clcommands: commands may be hidden (eg not displayed in help), generic
+    * clcommands: commands may be hidden (e.g. not displayed in help), generic
       ListCommandsCommand useful to build bash completion helpers 
 
     * changelog: module to parse ChangeLog file as this one, backported from
@@ -256,7 +256,7 @@ ChangeLog for logilab.common
 
 
 2008-02-18  --  0.28.2
-    * testlib: restore python2.3 compatiblity
+    * testlib: restore python2.3 compatibility
 
 
 
@@ -382,7 +382,7 @@ ChangeLog for logilab.common
 
     * fix textutils test
 
-    * fix a bug which provoqued a crash if devtools was not installed
+    * fix a bug which provoked a crash if devtools was not installed
 
 
 
@@ -544,7 +544,7 @@ ChangeLog for logilab.common
     * new clcommands module to handle commands based command line tool
       (based on the configuration module)
 
-    * new "date" otion type in optik_ext
+    * new "date" option type in optik_ext
 
     * new AttrObject in testlib to create objects in test with arbitrary attributes
 
@@ -604,7 +604,7 @@ ChangeLog for logilab.common
     * db: add missing port handling to get_connection function and
       dbapimodule.connect methods
 
-    * testlib: various fixes and minor improvments
+    * testlib: various fixes and minor improvements
 
 
 
@@ -793,7 +793,7 @@ ChangeLog for logilab.common
 2005-01-04  --  0.8.0
     * modutils: a lot of fixes/rewrite on various functions to avoid
       unnecessary imports, sys.path pollution, and other bugs (notably
-      making plylint reporting wrong modules name/path)
+      making pylint reporting wrong modules name/path)
 
     * astng: new "inspector" module, initially taken from pyreverse code
       (http://www.logilab.org/projects/pyreverse), miscellaneous bug fixes
@@ -822,7 +822,7 @@ ChangeLog for logilab.common
 
 2004-10-11  --  0.7.0
     * astng: new methods on the manager, returning astng with nodes for
-      packages (ie recursive structure instead of the flat one), with
+      packages (i.e. recursive structure instead of the flat one), with
       automatic lazy loading + introduction of a dict like interface to
       manipulate those nodes and Module, Class and Function nodes.
 
@@ -884,9 +884,9 @@ ChangeLog for logilab.common
 
     * astng: resolve(name) now handle (at least try) builtins
 
-    * astng: fixed Class.as_string (empty paren when no base classes)
+    * astng: fixed Class.as_string (empty parent when no base classes)
 
-    * astng.builder: knows a litle about method descriptors, Functin with
+    * astng.builder: knows a little about method descriptors, Function with
       unknown arguments have argnames==None.
 
     * fileutils: new is_binary(filename) function
@@ -897,7 +897,7 @@ ChangeLog for logilab.common
 
     * testlib: removed the spawn function (who used that ?!), added MockSMTP,
       MockConfigParser, MockConnexion and DocTestCase (test class for
-      modules embeding doctest). All mocks objects are very basic and will be
+      modules embedding doctest). All mocks objects are very basic and will be
       enhanced as the need comes.
 
     * testlib: added a TestCase class with some additional methods then
@@ -996,10 +996,10 @@ ChangeLog for logilab.common
 
 
 2003-10-08  --  0.3.4
-    * fix bug in asntg, occuring with python2.3 and modules including an
+    * fix bug in asntg, occurring with python2.3 and modules including an
       encoding declaration
 
-    * fix bug in astutils.get_rhs_consumed_names, occuring in lists
+    * fix bug in astutils.get_rhs_consumed_names, occurring in lists
       comprehension
 
     * remove debug print statement from configuration.py which caused a

@@ -14,7 +14,7 @@ from logilab.common.decorators import locked
 _marker = object()
 
 class Cache(dict):
-    """A dictionnary like cache.
+    """A dictionary like cache.
 
     inv:
         len(self._usage) <= self.size
@@ -45,7 +45,7 @@ class Cache(dict):
                 self._usage.remove(key)
             except ValueError:
                 # we are inserting a new key
-                # check the size of the dictionnary
+                # check the size of the dictionary
                 # and remove the oldest item in the cache
                 if self.size and len(self._usage) >= self.size:
                     super(Cache, self).__delitem__(self._usage[0])
