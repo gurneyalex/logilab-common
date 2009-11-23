@@ -93,7 +93,7 @@ def cp(source, destination):
     mv(source, destination, _action=shutil.copy)
 
 def find(directory, exts, exclude=False, blacklist=STD_BLACKLIST):
-    """Recursivly find files ending with the given extensions from the directory.
+    """Recursively find files ending with the given extensions from the directory.
 
     :type directory: str
     :param directory:

@@ -3,7 +3,7 @@
 
 This module contains useful functions for parsing and using XML data. For the
 moment, there is only one function that can parse the data inside a processing
-instruction and return a Python dictionnary.
+instruction and return a Python dictionary.
 
 :copyright: 2009 LOGILAB S.A. (Paris, FRANCE), all rights reserved.
 :contact: http://www.logilab.fr/ -- mailto:contact@logilab.fr
@@ -18,8 +18,8 @@ RE_SIMPLE_QUOTE = re.compile("([\w\-\.]+)='([^']+)'")
 
 def parse_pi_data(pi_data):
     """
-    Utilitary function that parses the data contained in an XML
-    processing instruction and returns a dictionnary of keywords and their
+    Utility function that parses the data contained in an XML
+    processing instruction and returns a dictionary of keywords and their
     associated values (most of the time, the processing instructions contain
     data like ``keyword="value"``, if a keyword is not associated to a value,
     for example ``keyword``, it will be associated to ``None``).
@@ -27,7 +27,7 @@ def parse_pi_data(pi_data):
     :param pi_data: data contained in an XML processing instruction.
     :type pi_data: unicode
 
-    :returns: Dictionnary of the keywords (Unicode strings) associated to
+    :returns: Dictionary of the keywords (Unicode strings) associated to
               their values (Unicode strings) as they were defined in the
               data.
     :rtype: dict

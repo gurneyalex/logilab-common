@@ -93,13 +93,13 @@ class RANDOM(FunctionDescr):
 
 class _GenericAdvFuncHelper:
     """Generic helper, trying to provide generic way to implement
-    specific functionnalities from others DBMS
+    specific functionalities from others DBMS
 
     An exception is raised when the functionality is not emulatable
     """
     # DBMS resources descriptors and accessors
 
-    backend_name = None # overriden in subclasses ('postgres', 'sqlite', etc.)
+    backend_name = None # overridden in subclasses ('postgres', 'sqlite', etc.)
     needs_from_clause = False
     union_parentheses_support = True
     intersect_all_support = True
@@ -110,7 +110,7 @@ class _GenericAdvFuncHelper:
     case_sensitive = False
 
     FUNCTIONS = {
-        # aggregat functions
+        # aggregate functions
         'MIN': MIN, 'MAX': MAX,
         'SUM': SUM,
         'COUNT': COUNT,
@@ -403,7 +403,7 @@ class _PGAdvFuncHelper(_GenericAdvFuncHelper):
 
 class _SqliteAdvFuncHelper(_GenericAdvFuncHelper):
     """Generic helper, trying to provide generic way to implement
-    specific functionnalities from others DBMS
+    specific functionalities from others DBMS
 
     An exception is raised when the functionality is not emulatable
     """

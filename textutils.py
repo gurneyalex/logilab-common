@@ -18,15 +18,15 @@ unquote, colorize_ansi
 
 :type ANSI_PREFIX: str
 :var ANSI_PREFIX:
-  ANSI terminal code notifing the start of an ANSI escape sequence
+  ANSI terminal code notifying the start of an ANSI escape sequence
 
 :type ANSI_END: str
 :var ANSI_END:
-  ANSI terminal code notifing the end of an ANSI escape sequence
+  ANSI terminal code notifying the end of an ANSI escape sequence
 
 :type ANSI_RESET: str
 :var ANSI_RESET:
-  ANSI terminal code reseting format defined by a previous ANSI escape sequence
+  ANSI terminal code resetting format defined by a previous ANSI escape sequence
 """
 __docformat__ = "restructuredtext en"
 
@@ -77,7 +77,7 @@ def unquote(string):
     """remove optional quotes (simple or double) from the string
 
     :type string: str or unicode
-    :param string: an optionaly quoted string
+    :param string: an optionally quoted string
 
     :rtype: str or unicode
     :return: the unquoted string (or the input string if it wasn't quoted)
@@ -127,7 +127,7 @@ def normalize_text(text, line_len=80, indent='', rest=False):
 
 def normalize_paragraph(text, line_len=80, indent=''):
     """normalize a text to display it with a maximum line size and
-    optionaly arbitrary indentation. Line jumps are normalized. The
+    optionally arbitrary indentation. Line jumps are normalized. The
     indentation string may be used top insert a comment mark for
     instance.
 
@@ -156,7 +156,7 @@ def normalize_paragraph(text, line_len=80, indent=''):
 
 def normalize_rest_paragraph(text, line_len=80, indent=''):
     """normalize a ReST text to display it with a maximum line size and
-    optionaly arbitrary indentation. Line jumps are normalized. The
+    optionally arbitrary indentation. Line jumps are normalized. The
     indentation string may be used top insert a comment mark for
     instance.
 
@@ -261,7 +261,7 @@ TIME_UNITS = {
 def apply_units( string, units, inter=None, final=float, blank_reg=_BLANK_RE,
     value_reg=_VALUE_RE):
     """Parse the string applying the units defined in units
-    (eg: "1.5m",{'m',60} -> 80).
+    (e.g.: "1.5m",{'m',60} -> 80).
 
     :type string: str or unicode
     :param string: the string to parse
@@ -273,7 +273,7 @@ def apply_units( string, units, inter=None, final=float, blank_reg=_BLANK_RE,
     :param inter: used to parse every intermediate value (need __sum__)
 
     :type blank_reg: regexp
-    :param blank_reg: should match eveyr blank char to ignore.
+    :param blank_reg: should match every blank char to ignore.
 
     :type value_reg: regexp with "value" and optional "unit" group
     :param value_reg: match a value and it's unit into the
@@ -387,7 +387,7 @@ def _get_ansi_code(color=None, style=None):
       style string (see `ANSI_COLORS` for available values). To get
       several style effects at the same time, use a coma as separator.
 
-    :raise KeyError: if an unexistant color or style identifier is given
+    :raise KeyError: if an unexistent color or style identifier is given
 
     :rtype: str
     :return: the built escape code
@@ -418,7 +418,7 @@ def colorize_ansi(msg, color=None, style=None):
       style string (see `ANSI_COLORS` for available values). To get
       several style effects at the same time, use a coma as separator.
 
-    :raise KeyError: if an unexistant color or style identifier is given
+    :raise KeyError: if an unexistent color or style identifier is given
 
     :rtype: str or unicode
     :return: the ansi escaped string

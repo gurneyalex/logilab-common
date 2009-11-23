@@ -42,10 +42,10 @@ __all__ = ['get_dbapi_compliant_module',
            ]
 
 class UnknownDriver(Exception):
-    """raised when a unknown driver is given to get connexion"""
+    """raised when a unknown driver is given to get connection"""
 
 class NoAdapterFound(Exception):
-    """Raised when no Adpater to DBAPI was found"""
+    """Raised when no Adapter to DBAPI was found"""
     def __init__(self, obj, objname=None, protocol='DBAPI'):
         if objname is None:
             objname = obj.__name__
@@ -164,7 +164,7 @@ class PyCursor:
 ## Adapters list ##############################################################
 
 class DBAPIAdapter:
-    """Base class for all DBAPI adpaters"""
+    """Base class for all DBAPI adapters"""
     UNKNOWN = None
 
     def __init__(self, native_module, pywrap=False):
@@ -174,7 +174,7 @@ class DBAPIAdapter:
         """
         self._native_module = native_module
         self._pywrap = pywrap
-        # optimisation: copy type codes from the native module to this instance
+        # optimization: copy type codes from the native module to this instance
         # since the .process_value method may be heavily used
         for typecode in ('STRING', 'BOOLEAN', 'BINARY', 'DATETIME', 'NUMBER',
                          'UNKNOWN'):
@@ -219,7 +219,7 @@ class DBAPIAdapter:
         elif typecode == self.BINARY and not binarywrap is None:
             return binarywrap(value)
         elif typecode == self.UNKNOWN:
-            # may occurs on constant selection for instance (eg SELECT 'hop')
+            # may occurs on constant selection for instance (e.g. SELECT 'hop')
             # with postgresql at least
             if isinstance(value, str):
                 return unicode(value, encoding, 'replace')
@@ -259,7 +259,7 @@ class _PsycopgAdapter(DBAPIAdapter):
     """Simple Psycopg Adapter to DBAPI (cnx_string differs from classical ones)
     """
     def connect(self, host='', database='', user='', password='', port=''):
-        """Handles psycopg connexion format"""
+        """Handles psycopg connection format"""
         if host:
             cnx_string = 'host=%s  dbname=%s  user=%s' % (host, database, user)
         else:
@@ -316,7 +316,7 @@ class _PgsqlAdapter(DBAPIAdapter):
     """Simple pyPgSQL Adapter to DBAPI
     """
     def connect(self, host='', database='', user='', password='', port=''):
-        """Handles psycopg connexion format"""
+        """Handles psycopg connection format"""
         kwargs = {'host' : host, 'port': port or None,
                   'database' : database,
                   'user' : user, 'password' : password or None}
@@ -421,7 +421,7 @@ class _PySqlite2Adapter(DBAPIAdapter):
 
 
     def connect(self, host='', database='', user='', password='', port=None):
-        """Handles sqlite connexion format"""
+        """Handles sqlite connection format"""
         sqlite = self._native_module
 
         class PySqlite2Cursor(sqlite.Cursor):
@@ -471,7 +471,7 @@ class _SqliteAdapter(DBAPIAdapter):
         self.DATETIME = native_module.TIMESTAMP
 
     def connect(self, host='', database='', user='', password='', port=''):
-        """Handles sqlite connexion format"""
+        """Handles sqlite connection format"""
         cnx = self._native_module.connect(database)
         return self._wrap_if_needed(cnx, user)
 
@@ -506,7 +506,7 @@ class _MySqlDBAdapter(DBAPIAdapter):
 
     def connect(self, host='', database='', user='', password='', port=None,
                 unicode=True, charset='utf8'):
-        """Handles mysqldb connexion format
+        """Handles mysqldb connection format
         the unicode named argument asks to use Unicode objects for strings
         in result sets and query parameters
         """
@@ -629,11 +629,11 @@ del _AdapterDirectory
 ## Main functions #############################################################
 
 def set_prefered_driver(database, module, _drivers=PREFERED_DRIVERS):
-    """sets the prefered driver module for database
+    """sets the preferred driver module for database
     database is the name of the db engine (postgresql, mysql...)
     module is the name of the module providing the connect function
     syntax is (params_func, post_process_func_or_None)
-    _drivers is a optionnal dictionnary of drivers
+    _drivers is a optional dictionary of drivers
     """
     try:
         modules = _drivers[database]
@@ -663,7 +663,7 @@ def get_dbapi_compliant_module(driver, prefered_drivers = None, quiet = False,
 def get_connection(driver='postgres', host='', database='', user='',
                   password='', port='', quiet=False, drivers=PREFERED_DRIVERS,
                   pywrap=False):
-    """return a db connexion according to given arguments"""
+    """return a db connection according to given arguments"""
     module, modname = _import_driver_module(driver, drivers, ['connect'])
     try:
         adapter = ADAPTER_DIRECTORY.get_adapter(driver, modname)

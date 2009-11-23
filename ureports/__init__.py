@@ -1,6 +1,6 @@
 """Universal report objects and some formatting drivers.
 
-A way to create simple reports using python objects, primarly designed to be
+A way to create simple reports using python objects, primarily designed to be
 formatted as text and html.
 
 :copyright:
