@@ -742,10 +742,10 @@ class _PyodbcSqlServer2000Adapter(_PyodbcAdapter):
     driver = "SQL Server"
     
 class _PyodbcSqlServer2005Adapter(_PyodbcAdapter):
-    driver = "SQL Native Client"
+    driver = "SQL Server Native Client 10.0"
 
 class _PyodbcSqlServer2008Adapter(_PyodbcAdapter):
-    driver = "SQL Native Client 10.0"
+    driver = "SQL Server Native Client 10.0"
 
 ## Drivers, Adapters and helpers registries ###################################
 
