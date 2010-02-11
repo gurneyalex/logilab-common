@@ -173,8 +173,8 @@ def date_range(begin, end, incday=None, incmonth=None):
         if not incday:
             incr = ONEDAY
         else:
-            incr = datetime.timedelta(incday)
-        while begin <= end:
+            incr = timedelta(incday)
+        while begin < end:
            yield begin
            begin += incr
 
