@@ -16,7 +16,7 @@ Additional helpers are also provided for advanced functionalities such
 as listing existing users or databases, creating database... Get the
 helper for your database using the `get_adv_func_helper` function.
 
-:copyright: 2002-2009 LOGILAB S.A. (Paris, FRANCE), all rights reserved.
+:copyright: 2002-2010 LOGILAB S.A. (Paris, FRANCE), all rights reserved.
 :contact: http://www.logilab.fr/ -- mailto:contact@logilab.fr
 :license: General Public License version 2 - http://www.gnu.org/licenses
 """
@@ -311,6 +311,32 @@ class _Psycopg2Adapter(_PsycopgAdapter):
             #extensions.register_adapter(StringIO.StringIO, adapt_stringio)
             #import cStringIO
             #extensions.register_adapter(cStringIO.StringIO, adapt_stringio)
+
+class _pyodbcwrappedPsycoPg2Adapter(_Psycopg2Adapter):
+    """
+    used to test and debug _pyodbcwrap under Linux.
+    No sense in using this class in production. 
+    """
+    def process_value(self, value, description, encoding='utf-8', binarywrap=None):
+        #return _Psycopg2Adapter.process_value(self, value, description, encoding, binarywrap)
+        # if the dbapi module isn't supporting type codes, override to return value directly
+        typecode = description[1]
+        assert typecode is not None, self
+        if typecode == self.STRING:
+            if isinstance(value, str):
+                return unicode(value, encoding, 'replace')
+        elif typecode == self.BOOLEAN:
+            return bool(value)
+        elif typecode == self.BINARY and not binarywrap is None:
+            #print "*"*500
+            #print 'binary', binarywrap(value.getbinary())
+            return binarywrap(value.getbinary())
+        elif typecode == self.UNKNOWN:
+            # may occurs on constant selection for instance (e.g. SELECT 'hop')
+            # with postgresql at least
+            if isinstance(value, str):
+                return unicode(value, encoding, 'replace')
+        return value
 
 
 class _PgsqlAdapter(DBAPIAdapter):
@@ -738,31 +764,68 @@ class _PyodbcAdapter(DBAPIAdapter):
         return value
 
 
+class _PyodbcAdapterMT(_PyodbcAdapter):
+    def process_value(self, value, description, encoding='utf-8', binarywrap=None):
+        # if the dbapi module isn't supporting type codes, override to return value directly
+        typecode = description[1]
+        assert typecode is not None, self
+        if typecode == self.STRING:
+            if isinstance(value, str):
+                return unicode(value, encoding, 'replace')
+        elif typecode == self.BINARY:  # value is a python buffer
+            if binarywrap is not None:
+                return binarywrap(value.value)
+            else:
+                return value.value
+        elif typecode == self.UNKNOWN:
+            # may occurs on constant selection for instance (e.g. SELECT 'hop')
+            # with postgresql at least
+            if isinstance(value, str):
+                return unicode(value, encoding, 'replace')
+
+        return value
+
 class _PyodbcSqlServer2000Adapter(_PyodbcAdapter):
     driver = "SQL Server"
-    
+
 class _PyodbcSqlServer2005Adapter(_PyodbcAdapter):
     driver = "SQL Native Client"
 
 class _PyodbcSqlServer2008Adapter(_PyodbcAdapter):
     driver = "SQL Native Client 10.0"
 
+class _PyodbcSqlServer2000AdapterMT(_PyodbcAdapterMT):
+    driver = "SQL Server"
+
+class _PyodbcSqlServer2005AdapterMT(_PyodbcAdapterMT):
+    driver = "SQL Native Client 10.0"
+
+class _PyodbcSqlServer2008AdapterMT(_PyodbcAdapterMT):
+    driver = "SQL Native Client 10.0"
+
 ## Drivers, Adapters and helpers registries ###################################
 
 
 PREFERED_DRIVERS = {
-    "postgres" : [ 'psycopg2', 'psycopg', 'pgdb', 'pyPgSQL.PgSQL', ],
+    "postgres" : [ #'logilab.common._pyodbcwrap',
+                   'psycopg2', 'psycopg', 'pgdb', 'pyPgSQL.PgSQL',
+                   ],
     "mysql" : [ 'MySQLdb', ], # 'pyMySQL.MySQL, ],
     "sqlite" : ['pysqlite2.dbapi2', 'sqlite', 'sqlite3',],
     "sqlserver2000" : ['pyodbc'],
     "sqlserver2005" : ['pyodbc'],
     "sqlserver2008" : ['pyodbc'],
+    # for use in multithreaded applications, e.g. CubicWeb
+    "sqlserver2000_mt" : ['logilab.common._pyodbcwrap'],
+    "sqlserver2005_mt" : ['logilab.common._pyodbcwrap'],
+    "sqlserver2008_mt" : ['logilab.common._pyodbcwrap'],
     }
 
 _ADAPTERS = {
     'postgres' : { 'pgdb' : _PgdbAdapter,
                    'psycopg' : _PsycopgAdapter,
                    'psycopg2' : _Psycopg2Adapter,
+                   #'logilab.common._pyodbcwrap':  _pyodbcwrappedPsycoPg2Adapter,
                    'pyPgSQL.PgSQL' : _PgsqlAdapter,
                    },
     'mysql' : { 'MySQLdb' : _MySqlDBAdapter, },
@@ -772,6 +835,9 @@ _ADAPTERS = {
     "sqlserver2000" : {'pyodbc': _PyodbcSqlServer2000Adapter},
     "sqlserver2005" : {'pyodbc': _PyodbcSqlServer2005Adapter},
     "sqlserver2008" : {'pyodbc': _PyodbcSqlServer2008Adapter},
+    "sqlserver2000_mt" : {'logilab.common._pyodbcwrap': _PyodbcSqlServer2000AdapterMT},
+    "sqlserver2005_mt" : {'logilab.common._pyodbcwrap': _PyodbcSqlServer2005AdapterMT},
+    "sqlserver2008_mt" : {'logilab.common._pyodbcwrap': _PyodbcSqlServer2008AdapterMT},
     }
 
 # _AdapterDirectory could be more generic by adding a 'protocol' parameter
