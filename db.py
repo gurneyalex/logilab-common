@@ -513,6 +513,7 @@ class _PySqlite2Adapter(DBAPIAdapter):
                 return self._cnx.cursor(PySqlite2Cursor)
             def __getattr__(self, attrname):
                 return getattr(self._cnx, attrname)
+
         cnx = sqlite.connect(database, detect_types=sqlite.PARSE_DECLTYPES)
         return self._wrap_if_needed(PySqlite2CnxWrapper(cnx), user)
 
