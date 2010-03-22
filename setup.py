@@ -177,7 +177,7 @@ def install(**kwargs):
     try:
         if not USE_SETUPTOOLS:
             from distutils import __version__ as distutils_version
-            if tuple([int(x) for x in distutils_version.split('.')]) <= (2, 5, 1):
+            if tuple([int(x) for x in distutils_version.split('.')]) < (2, 5, 1):
                 sys.argv.remove('--install-layout=deb')
                 print "W: remove '--install-layout=deb' option"
     except:
