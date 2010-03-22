@@ -8,7 +8,7 @@ Main functions available:
 * `ns_get_proxy` get a pyro proxy from a nameserver object identifier.
 
 :organization: Logilab
-:copyright: 2009 LOGILAB S.A. (Paris, FRANCE), all rights reserved.
+:copyright: 2009-2010 LOGILAB S.A. (Paris, FRANCE), all rights reserved.
 :contact: http://www.logilab.fr/ -- mailto:contact@logilab.fr
 """
 __docformat__ = "restructuredtext en"
