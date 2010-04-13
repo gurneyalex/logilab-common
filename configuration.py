@@ -82,9 +82,9 @@ Quick start: simplest usage
   >>>
 
 
-:copyright: 2003-2009 LOGILAB S.A. (Paris, FRANCE), all rights reserved.
+:copyright: 2003-2010 LOGILAB S.A. (Paris, FRANCE), all rights reserved.
 :contact: http://www.logilab.fr/ -- mailto:contact@logilab.fr
-:license: General Public License version 2 - http://www.gnu.org/licenses
+:license: GNU Lesser General Public License, v2.1 - http://www.gnu.org/licenses
 """
 from __future__ import generators
 __docformat__ = "restructuredtext en"

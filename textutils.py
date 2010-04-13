@@ -3,7 +3,7 @@
 :author:    Logilab
 :copyright: 2003-2008 LOGILAB S.A. (Paris, FRANCE), all rights reserved.
 :contact: http://www.logilab.fr/ -- mailto:contact@logilab.fr
-:license: General Public License version 2 - http://www.gnu.org/licenses
+:license: GNU Lesser General Public License, v2.1 - http://www.gnu.org/licenses
 
 :group text formatting: normalize_text, normalize_paragraph, pretty_match,\
 unquote, colorize_ansi
