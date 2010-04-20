@@ -46,6 +46,7 @@ import warnings
 from compiler.consts import CO_GENERATOR
 from ConfigParser import ConfigParser
 from itertools import dropwhile
+from functools import wraps
 
 try:
     from test import test_support
@@ -81,10 +82,11 @@ __unittest = 1
 def with_tempdir(callable):
     """A decorator ensuring no temporary file left when the function return
     Work only for temporary file create with the tempfile module"""
+    @wraps(callable)
     def proxy(*args, **kargs):
 
         old_tmpdir = tempfile.gettempdir()
-        new_tmpdir = tempfile.mkdtemp("-logilab-common-testlib","temp-dir-")
+        new_tmpdir = tempfile.mkdtemp(prefix="temp-lgc-")
         tempfile.tempdir = new_tmpdir
         try:
             return callable(*args, **kargs)
@@ -98,6 +100,7 @@ def with_tempdir(callable):
 def in_tempdir(callable):
     """A decorator moving the enclosed function inside the tempfile.tempfdir
     """
+    @wraps(callable)
     def proxy(*args, **kargs):
 
         old_cwd = os.getcwd()
@@ -111,7 +114,9 @@ def in_tempdir(callable):
 def within_tempdir(callable):
     """A decorator run the enclosed function inside a tmpdir removed after execution
     """
-    return with_tempdir(in_tempdir(callable))
+    proxy = with_tempdir(in_tempdir(callable))
+    proxy.__name__ = callable.__name__
+    return proxy
 
 def run_tests(tests, quiet, verbose, runner=None, capture=0):
     """Execute a list of tests.
