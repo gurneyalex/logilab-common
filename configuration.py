@@ -730,7 +730,7 @@ class OptionsManagerMixIn(object):
     @property
     def _config_parser(self):
         msg ='"_config_parser" attribute has been renamed to "cfgfile_parser"'
-        warn(msg, DeprecationWarning)
+        warn(msg, DeprecationWarning, stacklevel=2)
         return self.cfgfile_parser
 
 
