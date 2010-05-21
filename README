@@ -32,13 +32,13 @@ Here is a brief description of the available modules :
 
 * adbh.py:
   helper functions for using database advanced. Supported RDBMS
-  include PostgreSQL, MySQL and sqlite. See also db.py. 
+  include PostgreSQL, MySQL and sqlite. See also db.py.
 
 * astutils:
-  Deprecated module. Use logilab.astng. 
+  Deprecated module. Use logilab.astng.
 
 * bind.py :
-  Deprecated module. 
+  Deprecated module.
   Provides a way to optimize globals in certain functions by binding
   their names to values provided in a dictionary.
 
@@ -53,11 +53,11 @@ Here is a brief description of the available modules :
   Command line interface helper classes (for interactive programs
   using the command line)
 
-* compat.py: 
+* compat.py:
   Transparent compatibility layer between different python version
 
 * configuration.py :
-  Two mix-in classes to handle configuration from both command line 
+  Two mix-in classes to handle configuration from both command line
   (using optik/optparse) and configuration file.
 
 * corbautils.py:
@@ -95,7 +95,7 @@ Here is a brief description of the available modules :
   Bases class for interfaces.
 
 * logger.py :
-  Deprecated module : use logging from stdlib. 
+  Deprecated module : use logging from stdlib.
   Define a logger interface and two concrete loggers : one which prints
   everything on stdout, the other using syslog.
 
@@ -103,7 +103,7 @@ Here is a brief description of the available modules :
   extensions to stdlib's logging module
 
 * logservice.py:
-  Deprecated module. Use logging from stdlib. 
+  Deprecated module. Use logging from stdlib.
 
 * modutils.py :
   Module manipulation utilities.
@@ -120,14 +120,14 @@ Here is a brief description of the available modules :
   new option types (regexp, csv, color, date...)
 
 * optparser.py:
-  extend optparse's OptionParser to support commands 
+  extend optparse's OptionParser to support commands
 
 * patricia.py :
   A Python implementation of PATRICIA trie (Practical Algorithm to
   Retrieve Information Coded in Alphanumeric).
 
 * pdf_ext.py:
-  pdf and fdf file manipulations, with pdftk. 
+  pdf and fdf file manipulations, with pdftk.
 
 * pytest.py:
   unittest runner. See testlib
@@ -188,4 +188,4 @@ You can subscribe to this mailing list at
 http://lists.logilab.org/mailman/listinfo/python-projects
 
 Archives are available at
-http://lists.logilab.org/pipermail/python-projects/ 
+http://lists.logilab.org/pipermail/python-projects/
