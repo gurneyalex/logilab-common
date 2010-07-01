@@ -16,13 +16,8 @@
 #
 # You should have received a copy of the GNU Lesser General Public License along
 # with logilab-common.  If not, see <http://www.gnu.org/licenses/>.
+"""Extends the logging module from the standard library."""
 
-"""Extends the logging module from the standard library.
-
-
-
-
-"""
 __docformat__ = "restructuredtext en"
 
 import os

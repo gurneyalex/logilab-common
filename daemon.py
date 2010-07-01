@@ -27,7 +27,7 @@ import time
 import warnings
 
 
-def daemonize(pidfile):
+def daemonize(pidfile=None, uid=None):
     # See http://www.erlenstar.demon.co.uk/unix/faq_toc.html#TOC16
     # XXX unix specific
     #
@@ -66,6 +66,14 @@ def daemonize(pidfile):
         f = file(pidfile, 'w')
         f.write(str(os.getpid()))
         f.close()
+    # change process uid
+    if uid:
+        try:
+            uid = int(uid)
+        except ValueError:
+            from pwd import getpwnam
+            uid = getpwnam(uid).pw_uid
+        os.setuid(uid)
     return None
 
 

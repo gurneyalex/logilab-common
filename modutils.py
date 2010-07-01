@@ -18,11 +18,6 @@
 # with logilab-common.  If not, see <http://www.gnu.org/licenses/>.
 """Python modules manipulation utility functions.
 
-
-
-
-
-
 :type PY_SOURCE_EXTS: tuple(str)
 :var PY_SOURCE_EXTS: list of possible python source file extension
 
@@ -161,7 +156,7 @@ def load_module_from_modpath(parts, path=None, use_sys=1):
     return module
 
 
-def load_module_from_file(filepath, path=None, use_sys=1):
+def load_module_from_file(filepath, path=None, use_sys=1, extrapath=None):
     """Load a Python module from it's path.
 
     :type filepath: str
@@ -183,7 +178,8 @@ def load_module_from_file(filepath, path=None, use_sys=1):
     :rtype: module
     :return: the loaded module
     """
-    return load_module_from_modpath(modpath_from_file(filepath), path, use_sys)
+    modpath = modpath_from_file(filepath, extrapath)
+    return load_module_from_modpath(modpath, path, use_sys)
 
 
 def _check_init(path, mod_path):

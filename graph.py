@@ -18,11 +18,8 @@
 """Graph manipulation utilities.
 
 (dot generation adapted from pypy/translator/tool/make_dot.py)
-
-
-
-
 """
+
 __docformat__ = "restructuredtext en"
 
 __metaclass__ = type
@@ -116,6 +113,8 @@ class DotBackend:
         pdot.close()
         if target != 'dot':
             if mapfile:
+                print '%s -Tcmapx -o%s -T%s %s -o%s' % (self.renderer, mapfile,
+                                                        target, dot_sourcepath, outputfile)
                 subprocess.call('%s -Tcmapx -o%s -T%s %s -o%s' % (self.renderer, mapfile,
                            target, dot_sourcepath, outputfile), shell=True)
             else:
@@ -152,6 +151,7 @@ class GraphGenerator:
         # the backend is responsible to output the graph in a particular format
         self.backend = backend
 
+    # XXX doesn't like space in outpufile / mapfile
     def generate(self, visitor, propshdlr, outputfile=None, mapfile=None):
         # the visitor
         # the property handler is used to get node and edge properties
