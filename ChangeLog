@@ -1,6 +1,9 @@
 ChangeLog for logilab.common
 ============================
 
+--
+    * don't raise string exception in testlib (closes #35331)
+
 2010-06-04  --  0.50.3
     * logging: added new optional kw argument to init_log rotating_parameters
 

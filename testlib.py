@@ -217,8 +217,8 @@ def run_test(test, verbose, runner=None, capture=0):
         if runner is None:
             runner = SkipAwareTextTestRunner(capture=capture) # verbosity=0)
         return runner.run(suite)
-    except KeyboardInterrupt, v:
-        raise KeyboardInterrupt, v, sys.exc_info()[2]
+    except KeyboardInterrupt:
+        raise
     except:
         # raise
         type, value = sys.exc_info()[:2]
@@ -837,17 +837,14 @@ Examples:
             try:
                 restartfile = open(FILE_RESTART, 'r')
                 try:
-                    try:
-                        succeededtests = list(elem.rstrip('\n\r') for elem in
-                            restartfile.readlines())
-                        removeSucceededTests(self.test, succeededtests)
-                    except Exception, e:
-                        raise e
+                    succeededtests = list(elem.rstrip('\n\r') for elem in
+                                          restartfile.readlines())
+                    removeSucceededTests(self.test, succeededtests)
                 finally:
                     restartfile.close()
-            except Exception ,e:
-                raise "Error while reading \
-succeeded tests into", osp.join(os.getcwd(),FILE_RESTART)
+            except Exception, ex:
+                raise Exception("Error while reading succeeded tests into %s: %s"
+                                % (osp.join(os.getcwd(), FILE_RESTART), ex))
 
         result = self.testRunner.run(self.test)
         # help garbage collection: we want TestSuite, which hold refs to every
@@ -1160,19 +1157,16 @@ class TestCase(unittest.TestCase):
                     try:
                         restartfile = open(FILE_RESTART, 'a')
                         try:
-                            try:
-                                descr = '.'.join((self.__class__.__module__,
-                                    self.__class__.__name__,
-                                    self._testMethodName))
-                                restartfile.write(descr+os.linesep)
-                            except Exception, e:
-                                raise e
+                            descr = '.'.join((self.__class__.__module__,
+                                              self.__class__.__name__,
+                                              self._testMethodName))
+                            restartfile.write(descr+os.linesep)
                         finally:
                             restartfile.close()
-                    except Exception, e:
+                    except Exception, ex:
                         print >> sys.__stderr__, "Error while saving \
 succeeded test into", osp.join(os.getcwd(),FILE_RESTART)
-                        raise e
+                        raise ex
                 result.addSuccess(self)
         finally:
             # if result.cvg:
@@ -1663,7 +1657,7 @@ succeeded test into", osp.join(os.getcwd(),FILE_RESTART)
                 excName = excClass.__name__
             else:
                 excName = str(excClass)
-            raise self.failureException, "%s not raised" % excName
+            raise self.failureException("%s not raised" % excName)
 
     assertRaises = failUnlessRaises
 
