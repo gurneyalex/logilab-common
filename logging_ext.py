@@ -97,34 +97,31 @@ def set_color_formatter(logger=None, **kw):
 LOG_FORMAT = '%(asctime)s - (%(name)s) %(levelname)s: %(message)s'
 LOG_DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
 
-def init_log(debug=False, syslog=False, logthreshold=None, logfile=None,
-             logformat=LOG_FORMAT, logdateformat=LOG_DATE_FORMAT, fmt=None,
-             rotation_parameters=None, handler=None):
-    """init the log service"""
+def get_handler(debug=False, syslog=False, logfile=None, rotation_parameters=None):
+    """get an apropriate handler according to given parameters"""
     if os.environ.get('APYCOT_ROOT'):
-        logthreshold = logging.CRITICAL
-        # redirect logs to stdout to avoid apycot output parsing failure
-        if handler is None:
-            handler = logging.StreamHandler(sys.stdout)
-    elif handler is None:
-            if debug:
-                    handler = logging.StreamHandler()
-            elif logfile is None:
-                if syslog:
-                    from logging import handlers
-                    handler = handlers.SysLogHandler()
-                else:
-                    handler = logging.StreamHandler()
+        handler = logging.StreamHandler(sys.stdout)
+    if debug:
+        handler = logging.StreamHandler()
+    elif logfile is None:
+        if syslog:
+            from logging import handlers
+            handler = handlers.SysLogHandler()
+        else:
+            handler = logging.StreamHandler()
+    else:
+        try:
+            if rotation_parameters is None:
+                handler = logging.FileHandler(logfile)
             else:
-                try:
-                    if rotation_parameters is None:
-                        handler = logging.FileHandler(logfile)
-                    else:
-                        from logging.handlers import TimedRotatingFileHandler
-                        handler = TimedRotatingFileHandler(
-                            logfile, **rotation_parameters)
-                except IOError:
-                    handler = logging.StreamHandler()
+                from logging.handlers import TimedRotatingFileHandler
+                handler = TimedRotatingFileHandler(
+                    logfile, **rotation_parameters)
+        except IOError:
+            handler = logging.StreamHandler()
+    return handler
+
+def get_threshold(debug=False, logthreshold=None):
     if logthreshold is None:
         if debug:
             logthreshold = logging.DEBUG
@@ -133,12 +130,9 @@ def init_log(debug=False, syslog=False, logthreshold=None, logfile=None,
     elif isinstance(logthreshold, basestring):
         logthreshold = getattr(logging, THRESHOLD_MAP.get(logthreshold,
                                                           logthreshold))
-    # configure the root logger
-    logger = logging.getLogger()
-    logger.setLevel(logthreshold)
-    # only addHandler and removeHandler method while I would like a
-    # setHandler method, so do it this way :$
-    logger.handlers = [handler]
+    return logthreshold
+
+def get_formatter(logformat=LOG_FORMAT, logdateformat=LOG_DATE_FORMAT):
     isatty = hasattr(sys.__stdout__, 'isatty') and sys.__stdout__.isatty()
     if debug and isatty and sys.platform != 'win32':
         fmt = ColorFormatter(logformat, logdateformat)
@@ -148,8 +142,24 @@ def init_log(debug=False, syslog=False, logthreshold=None, logfile=None,
             if 'kick' in record.message:
                 return 'red'
         fmt.colorfilters.append(col_fact)
-    elif fmt is None:
+    else:
         fmt = logging.Formatter(logformat, logdateformat)
+    return fmt
+
+def init_log(debug=False, syslog=False, logthreshold=None, logfile=None,
+             logformat=LOG_FORMAT, logdateformat=LOG_DATE_FORMAT, fmt=None,
+             rotation_parameters=None, handler=None):
+    """init the log service"""
+    logger = getLogger()
+    if handler is None:
+        handler = get_handler(debug, syslog, logfile, rotation_parameters)
+    # only addHandler and removeHandler method while I would like a setHandler
+    # method, so do it this way :$
+    logger.handlers = [handler]
+    threshold = get_threshold(debug, logthreshold)
+    logger.setLevel(logthreshold)
+    if fmt is None:
+        fmt = get_formatter(logformat=LOG_FORMAT, logdateformat=LOG_DATE_FORMAT)
     handler.setFormatter(fmt)
     return handler
 
