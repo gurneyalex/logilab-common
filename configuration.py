@@ -113,7 +113,9 @@ from ConfigParser import ConfigParser, NoOptionError, NoSectionError, \
      DuplicateSectionError
 from warnings import warn
 
-from logilab.common.compat import set, reversed
+from logilab.common.compat import set, reversed, callable, raw_input
+from logilab.common.compat import str_encode as _encode
+
 from logilab.common.textutils import normalize_text, unquote
 from logilab.common import optik_ext as optparse
 
@@ -129,11 +131,6 @@ def _get_encoding(encoding, stream):
         import locale
         encoding = locale.getpreferredencoding()
     return encoding
-
-def _encode(string, encoding):
-    if isinstance(string, unicode):
-        return string.encode(encoding)
-    return str(string)
 
 
 # validation functions ########################################################
@@ -479,7 +476,7 @@ class OptionsManagerMixIn(object):
         args, optdict = self.optik_option(provider, opt, optdict)
         option = optikcontainer.add_option(*args, **optdict)
         self._all_options[opt] = provider
-        self._maxlevel = max(self._maxlevel, option.level)
+        self._maxlevel = max(self._maxlevel, option.level or 0)
 
     def optik_option(self, provider, opt, optdict):
         """get our personal option definition and return a suitable form for

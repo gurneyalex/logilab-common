@@ -55,7 +55,6 @@ import math
 from shutil import rmtree
 from operator import itemgetter
 import warnings
-from compiler.consts import CO_GENERATOR
 from ConfigParser import ConfigParser
 from logilab.common.deprecation import deprecated
 from itertools import dropwhile
@@ -85,7 +84,8 @@ except ImportError:
     test_support = TestSupport()
 
 # pylint: disable=W0622
-from logilab.common.compat import set, enumerate, any, sorted, InheritableSet
+from logilab.common.compat import (set, enumerate, any, sorted, InheritableSet,
+                                   callable)
 # pylint: enable-msg=W0622
 from logilab.common.modutils import load_module_from_name
 from logilab.common.debugger import Debugger, colorize_source
@@ -101,6 +101,23 @@ DEFAULT_PREFIXES = ('test', 'regrtest', 'smoketest', 'unittest',
 ENABLE_DBC = False
 
 FILE_RESTART = ".pytest.restart"
+
+if sys.version_info >= (2, 6):
+    # FIXME : this does not work as expected / breaks tests on testlib
+    # however testlib does not work on py3k for many reasons ...
+    from inspect import CO_GENERATOR
+else:
+    from compiler.consts import CO_GENERATOR
+
+if sys.version_info >= (3, 0):
+    def is_generator(function):
+        flags = function.__code__.co_flags
+        return flags & CO_GENERATOR
+
+else:
+    def is_generator(function):
+        flags = function.func_code.co_flags
+        return flags & CO_GENERATOR
 
 UNITTEST2 = getattr(unittest, "__package__", "") == 'unittest2'
 
@@ -490,7 +507,6 @@ class SkipAwareTextTestRunner(unittest.TextTestRunner):
                 testname = '%s.%s' % (test.im_class.__name__, func.__name__)
             else:
                 return True # Not sure when this happens
-
             if is_generator(func) and skipgenerator:
                 return self.does_match_tags(func) # Let inner tests decide at run time
 
@@ -964,10 +980,6 @@ class InnerTestSkipped(SkipTest):
     """raised when a test is skipped"""
     pass
 
-def is_generator(function):
-    flags = function.func_code.co_flags
-    return flags & CO_GENERATOR
-
 
 def parse_generative_args(params):
     args = []
@@ -1038,7 +1050,7 @@ class TestCase(unittest.TestCase):
         super(TestCase, self).__init__(methodName)
         # internal API changed in python2.5
         if sys.version_info >= (2, 5):
-            self.__exc_info = self._exc_info
+            self.__exc_info = sys.exc_info
             self.__testMethodName = self._testMethodName
         else:
             # let's give easier access to _testMethodName to every subclasses
