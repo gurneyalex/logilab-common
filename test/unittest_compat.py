@@ -20,7 +20,7 @@
 from logilab.common.testlib import TestCase, unittest_main
 import sys
 import types
-import __builtin__
+from logilab.common.compat import builtins
 
 class CompatTCMixIn:
     MODNAMES = {}
@@ -38,8 +38,8 @@ class CompatTCMixIn:
         for modname in self.MODNAMES:
             del sys.modules[modname]
         for funcname, func in self.builtins_backup.items():
-            setattr(__builtin__, funcname, func)
-            # delattr(__builtin__, 'builtin_%s' % funcname)
+            setattr(builtins, funcname, func)
+            # delattr(builtins, 'builtin_%s' % funcname)
         for modname, mod in self.modules_backup.items():
             sys.modules[modname] = mod
         try:
@@ -49,18 +49,18 @@ class CompatTCMixIn:
 
     def remove_builtins(self):
         for builtin in self.BUILTINS:
-            func = getattr(__builtin__, builtin, None)
+            func = getattr(builtins, builtin, None)
             if func is not None:
                 self.builtins_backup[builtin] = func
-                delattr(__builtin__, builtin)
-                # setattr(__builtin__, 'builtin_%s' % builtin, func)
+                delattr(builtins, builtin)
+                # setattr(builtins, 'builtin_%s' % builtin, func)
     def alter_builtins(self):
         for builtin, func in self.ALTERED_BUILTINS.iteritems():
-            old_func = getattr(__builtin__, builtin, None)
+            old_func = getattr(builtins, builtin, None)
             if func is not None:
                 self.builtins_backup[builtin] = old_func
-                setattr(__builtin__, builtin, func)
-                # setattr(__builtin__, 'builtin_%s' % builtin, func)
+                setattr(builtins, builtin, func)
+                # setattr(builtins, 'builtin_%s' % builtin, func)
 
     def remove_modules(self):
         for modname in self.MODNAMES:
@@ -90,6 +90,8 @@ class Py23CompatTC(CompatTCMixIn, TestCase):
         }
 
     def test_sum(self):
+        if sys.version_info >= (3, 0):
+            self.skip("don't test 2.3 compat 'sum' on >= 3.0")
         from logilab.common.compat import sum
         self.assertEqual(sum(range(5)), 10)
         self.assertRaises(TypeError, sum, 'abc')
@@ -142,6 +144,8 @@ class Py24CompatTC(CompatTCMixIn, TestCase):
     BUILTINS = ('reversed', 'sorted', 'set', 'frozenset',)
 
     def test_sorted(self):
+        if sys.version_info >= (3, 0):
+            self.skip("don't test 2.4 compat 'sorted' on >= 3.0")
         from logilab.common.compat import sorted
         l = [3, 1, 2, 5, 4]
         s = sorted(l)
@@ -163,6 +167,8 @@ class Py24CompatTC(CompatTCMixIn, TestCase):
         self.assertEqual(l, range(5))
 
     def test_set(self):
+        if sys.version_info >= (3, 0):
+            self.skip("don't test 2.4 compat 'set' on >= 3.0")
         from logilab.common.compat import set
         s1 = set(range(5))
         s2 = set(range(2, 6))

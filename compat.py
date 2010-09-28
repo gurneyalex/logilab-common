@@ -28,7 +28,41 @@ import os
 import sys
 from warnings import warn
 
-import __builtin__
+import __builtin__ as builtins # 2to3 will tranform '__builtin__' to 'builtins'
+
+if sys.version_info < (3, 0):
+    str_to_bytes = str
+    def str_encode(string, encoding):
+        if isinstance(string, unicode):
+            return string.encode(encoding)
+        return str(string)
+else:
+    def str_to_bytes(string):
+        return str.encode(string)
+    # we have to ignore the encoding in py3k to be able to write a string into a
+    # TextIOWrapper or like object (which expect an unicode string)
+    def str_encode(string, encoding):
+        return str(string)
+
+try:
+    callable = callable
+except NameError:# callable removed from py3k
+    import collections
+    def callable(something):
+        return isinstance(something, collections.Callable)
+    del collections
+
+if sys.version_info < (3, 0):
+    raw_input = raw_input
+else:
+    raw_input = input
+
+if sys.version_info < (3, 0):
+    FileIO = file
+else:
+    import io
+    FileIO = io.FileIO
+    del io
 
 try:
     set = set
@@ -201,7 +235,7 @@ except TypeError:
         key= kargs.pop("key", None)
         #default implementation
         if key is None:
-            return __builtin__.max(*args,**kargs)
+            return builtins.max(*args,**kargs)
 
         for karg in kargs:
             raise TypeError("unexpected keyword argument %s for function max") % karg

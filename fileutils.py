@@ -28,14 +28,15 @@ __docformat__ = "restructuredtext en"
 import sys
 import shutil
 import mimetypes
-from os.path import isabs, isdir, islink, split, exists, walk, normpath, join
+from os.path import isabs, isdir, islink, split, exists, normpath, join
 from os.path import abspath
-from os import sep, mkdir, remove, listdir, stat, chmod
+from os import sep, mkdir, remove, listdir, stat, chmod, walk
 from stat import ST_MODE, S_IWRITE
 from cStringIO import StringIO
 
 from logilab.common import STD_BLACKLIST as BASE_BLACKLIST, IGNORED_EXTENSIONS
 from logilab.common.shellutils import find
+from logilab.common.compat import FileIO
 
 def first_level_directory(path):
     """Return the first level directory of a path.
@@ -123,9 +124,10 @@ def ensure_fs_mode(filepath, desired_mode=S_IWRITE):
         chmod(filepath, mode | desired_mode)
 
 
-class ProtectedFile(file):
-    """A special file-object class that automatically that automatically
-    does a 'chmod +w' when needed.
+# XXX (syt) unused? kill?
+class ProtectedFile(FileIO):
+    """A special file-object class that automatically does a 'chmod +w' when
+    needed.
 
     XXX: for now, the way it is done allows 'normal file-objects' to be
     created during the ProtectedFile object lifetime.
@@ -150,7 +152,7 @@ class ProtectedFile(file):
             if not self.original_mode & S_IWRITE:
                 chmod(filepath, self.original_mode | S_IWRITE)
                 self.mode_changed = True
-        file.__init__(self, filepath, mode)
+        FileIO.__init__(self, filepath, mode)
 
     def _restore_mode(self):
         """restores the original mode if needed"""
@@ -162,7 +164,7 @@ class ProtectedFile(file):
     def close(self):
         """restore mode before closing"""
         self._restore_mode()
-        file.close(self)
+        FileIO.close(self)
 
     def __del__(self):
         if not self.closed:
@@ -356,35 +358,34 @@ def export(from_dir, to_dir,
       flag indicating whether information about exported files should be
       printed to stderr, default to False
     """
-    def make_mirror(_, directory, fnames):
-        """walk handler"""
-        for norecurs in blacklist:
-            try:
-                fnames.remove(norecurs)
-            except ValueError:
-                continue
-        for filename in fnames:
-            # don't include binary files
-            for ext in ignore_ext:
-                if filename.endswith(ext):
-                    break
-            else:
-                src = join(directory, filename)
-                dest = to_dir + src[len(from_dir):]
-                if verbose:
-                    print >> sys.stderr, src, '->', dest
-                if isdir(src):
-                    if not exists(dest):
-                        mkdir(dest)
-                else:
-                    if exists(dest):
-                        remove(dest)
-                    shutil.copy2(src, dest)
     try:
         mkdir(to_dir)
     except OSError:
-        pass
-    walk(from_dir, make_mirror, None)
+        pass # FIXME we should use "exists" if the point is about existing dir
+             # else (permission problems?) shouldn't return / raise ?
+    for directory, dirnames, filenames in walk(from_dir):
+        for norecurs in blacklist:
+            try:
+                dirnames.remove(norecurs)
+            except ValueError:
+                continue
+        for dirname in dirnames:
+            src = join(directory, dirname)
+            dest = to_dir + src[len(from_dir):]
+            if isdir(src):
+                if not exists(dest):
+                    mkdir(dest)
+        for filename in filenames:
+            # don't include binary files
+            if filename.endswith(ignore_ext):
+                continue
+            src = join(directory, filename)
+            dest = to_dir + src[len(from_dir):]
+            if verbose:
+                print >> sys.stderr, src, '->', dest
+            if exists(dest):
+                remove(dest)
+            shutil.copy2(src, dest)
 
 
 def remove_dead_links(directory, verbose=0):
@@ -398,12 +399,11 @@ def remove_dead_links(directory, verbose=0):
       flag indicating whether information about deleted links should be
       printed to stderr, default to False
     """
-    def _remove_dead_link(_, directory, fnames):
-        """walk handler"""
-        for filename in fnames:
-            src = join(directory, filename)
+    for dirpath, dirname, filenames in walk(directory):
+        for filename in dirnames + filenames:
+            src = join(dirpath, filename)
             if islink(src) and not exists(src):
                 if verbose:
                     print 'remove dead link', src
                 remove(src)
-    walk(directory, _remove_dead_link, None)
+
