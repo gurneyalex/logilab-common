@@ -29,9 +29,12 @@ import tempfile
 import time
 import fnmatch
 import errno
-from os.path import exists, isdir, islink, basename, join, walk
+from os.path import exists, isdir, islink, basename, join
 
-from logilab.common import STD_BLACKLIST
+from logilab.common import STD_BLACKLIST, _handle_blacklist
+from logilab.common.compat import raw_input
+from logilab.common.compat import str_to_bytes
+
 try:
     from logilab.common.proc import ProcInfo, NoSuchProcess
 except ImportError:
@@ -168,22 +171,14 @@ def find(directory, exts, exclude=False, blacklist=STD_BLACKLIST):
                 if filename.endswith(ext):
                     return True
             return False
-    def func(files, directory, fnames):
-        """walk handler"""
-        # remove files/directories in the black list
-        for norecurs in blacklist:
-            try:
-                fnames.remove(norecurs)
-            except ValueError:
-                continue
-        for filename in fnames:
-            src = join(directory, filename)
-            if isdir(src):
-                continue
-            if match(filename, exts):
-                files.append(src)
     files = []
-    walk(directory, func, files)
+    for dirpath, dirnames, filenames in os.walk(directory):
+        _handle_blacklist(blacklist, dirnames, filenames)
+        # don't append files if the directory is blacklisted
+        dirname = basename(dirpath)
+        if dirname in blacklist:
+            continue
+        files.extend([join(dirpath, f) for f in filenames if match(f, exts)])
     return files
 
 
@@ -210,11 +205,9 @@ def globfind(directory, pattern, blacklist=STD_BLACKLIST):
       iterator over the list of all matching files
     """
     for curdir, dirnames, filenames in os.walk(directory):
+        _handle_blacklist(blacklist, dirnames, filenames)
         for fname in fnmatch.filter(filenames, pattern):
             yield join(curdir, fname)
-        for skipped in blacklist:
-            if skipped in dirnames:
-                dirnames.remove(skipped)
 
 def unzip(archive, destdir):
     import zipfile
@@ -255,7 +248,7 @@ def acquire_lock(lock_file, max_try=10, delay=10, max_delay=3600):
     while count:
         try:
             fd = os.open(lock_file, os.O_EXCL | os.O_RDWR | os.O_CREAT)
-            os.write(fd, str(os.getpid()))
+            os.write(fd, str_to_bytes(str(os.getpid())) )
             os.close(fd)
             return True
         except OSError, e:
