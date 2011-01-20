@@ -84,7 +84,7 @@ def deprecated(reason=None, stacklevel=2):
             return func(*args, **kwargs)
         try:
             wrapped.__name__ = func.__name__
-        except TypeError: # readonly attribute in 2.3 
+        except TypeError: # readonly attribute in 2.3
             pass
         wrapped.__doc__ = func.__doc__
         return wrapped
