@@ -202,11 +202,14 @@ def ordered_nodes(graph):
                     break
             else:
                 deps_ok.append(node)
-        order.extend(sorted(deps_ok))
+        order.append(deps_ok)
         order_set |= set(deps_ok)
         for node in deps_ok:
             del graph[node]
-    return tuple(order)
+    result = []
+    for grp in reversed(order):
+        result.extend(sorted(grp))
+    return tuple(result)
 
 
 def get_cycles(graph_dict, vertices=None):

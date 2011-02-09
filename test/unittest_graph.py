@@ -54,9 +54,12 @@ class ordered_nodesTC(TestCase):
         self.assertEqual(ordered, ('a',))
 
     def test_single_dependency(self):
-        graph = {'a':[], 'b':['a']}
+        graph = {'a':['b'], 'b':[]}
         ordered = ordered_nodes(graph)
         self.assertEqual(ordered, ('a','b'))
+        graph = {'a':[], 'b':['a']}
+        ordered = ordered_nodes(graph)
+        self.assertEqual(ordered, ('b','a'))
 
     def test_two_items_no_dependency(self):
         graph = {'a':[], 'b':[]}
@@ -69,14 +72,14 @@ class ordered_nodesTC(TestCase):
         self.assertEqual(ordered, ('a', 'b', 'c'))
 
     def test_three_items_one_dependency(self):
-        graph = {'a': ['b'], 'b': [], 'c':[]}
+        graph = {'a': ['c'], 'b': [], 'c':[]}
         ordered = ordered_nodes(graph)
-        self.assertEqual(ordered, ('b', 'c', 'a'))
+        self.assertEqual(ordered, ('a', 'b', 'c'))
 
     def test_three_items_two_dependencies(self):
         graph = {'a': ['b'], 'b': ['c'], 'c':[]}
         ordered = ordered_nodes(graph)
-        self.assertEqual(ordered, ('c', 'b', 'a'))
+        self.assertEqual(ordered, ('a', 'b', 'c'))
 
     def test_bad_graph(self):
         graph = {'a':['b']}
