@@ -1,7 +1,10 @@
 ChangeLog for logilab.common
 ============================
 
---
+-- <default>
+    * daemon: remove unused(?) DaemonMixin class
+
+-- <stable>
     * daemon: call initgroups/setgid before setuid (closes #74173)
     * decorators: @monkeypatch should produce a method object (closes #73920)
     * modutils: allow overriding of _getobj by suppressing mangling
