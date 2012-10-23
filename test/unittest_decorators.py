@@ -17,6 +17,7 @@
 # with logilab-common.  If not, see <http://www.gnu.org/licenses/>.
 """unit tests for the decorators module
 """
+import sys
 import types
 
 from logilab.common.testlib import TestCase, unittest_main
@@ -34,8 +35,15 @@ class DecoratorsTC(TestCase):
             @monkeypatch(MyClass)
             def meth2(self):
                 return 12
-        self.assertTrue(isinstance(MyClass.meth1, types.MethodType))
-        self.assertTrue(isinstance(MyClass.meth2, types.MethodType))
+        if sys.version_info < (3, 0):
+            # with python3, unbound method are functions
+            self.assertIsInstance(MyClass.meth1, types.MethodType)
+            self.assertIsInstance(MyClass.meth2, types.MethodType)
+        else:
+            self.assertIsInstance(MyClass.meth1, types.FunctionType)
+            self.assertIsInstance(MyClass.meth2, types.FunctionType)
+        self.assertEqual(MyClass().meth1(), 12)
+        self.assertEqual(MyClass().meth2(), 12)
 
     def test_monkeypatch_callable_non_callable(self):
         tester = self
