@@ -218,7 +218,8 @@ class Registry(dict):
         assert not '__abstract__' in obj.__dict__
         assert obj.__select__
         oid = oid or obj.__regid__
-        assert oid
+        assert oid, ('no explicit name supplied to register object %s, '
+                     'which has no __regid__ set' % obj)
         if clear:
             objects = self[oid] =  []
         else:
@@ -500,7 +501,7 @@ class RegistryStore(dict):
     def setdefault(self, regid):
         try:
             return self[regid]
-        except KeyError:
+        except RegistryNotFound:
             self[regid] = self.registry_class(regid)(self.debugmode)
             return self[regid]
 
@@ -519,6 +520,8 @@ class RegistryStore(dict):
         :meth:`~logilab.common.registry.RegistryStore.register_and_replace`
         for instance)
         """
+        assert isinstance(modname, basestring), \
+            'modname expected to be a module name (ie string), got %r' % modname
         for obj in objects:
             try:
                 if obj.__module__ != modname or obj in butclasses:
