@@ -1,7 +1,32 @@
 ChangeLog for logilab.common
 ============================
 
-2012-04-12  -- 0.58.0
+2012-11-14  --  0.58.3
+    * date: fix ustrftime() impl. for python3 (closes #82161, patch by Arfrever
+      Frehtes Taifersar Arahesis) and encoding detection for python2 (closes
+      #109740)
+
+    * other python3 code and test fixes (closes #104047)
+
+    * registry: setdefault shouldn't raise RegistryNotFound (closes #111010)
+
+    * table: stop encoding to iso-8859-1, use unicode (closes #105847)
+
+    * setup: properly install additional files during build instead of install (closes #104045)
+
+
+
+2012-07-30  --  0.58.2
+    * modutils: fixes (closes #100757 and #100935)
+
+
+
+2012-07-17  --  0.58.1
+    * modutils, testlib: be more python implementation independant (closes #99493 and #99627)
+
+
+
+2012-04-12  --  0.58.0
     * new `registry` module containing a backport of CubicWeb selectable objects registry (closes #84654)
 
     * testlib: DocTestCase fix builtins pollution after doctest execution.
@@ -9,6 +34,7 @@ ChangeLog for logilab.common
     * shellutil: add argument to ``ProgressBar.update`` to tune cursor progression (closes #88981)
 
     * deprecated: new DeprecationWrapper class (closes #88942)
+
 
 
 2012-03-22  --  0.57.2

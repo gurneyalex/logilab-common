@@ -1,4 +1,4 @@
-# copyright 2003-2011 LOGILAB S.A. (Paris, FRANCE), all rights reserved.
+# copyright 2003-2012 LOGILAB S.A. (Paris, FRANCE), all rights reserved.
 # contact http://www.logilab.fr/ -- mailto:contact@logilab.fr
 #
 # This file is part of logilab-common.
@@ -46,14 +46,14 @@ class DecoratorsTC(TestCase):
             return 12
         class XXX(object):
             def __call__(self, other):
-                tester.assertTrue(isinstance(other, MyClass))
+                tester.assertIsInstance(other, MyClass)
                 return 12
         try:
             monkeypatch(MyClass)(XXX())
         except AttributeError, err:
             self.assertTrue(str(err).endswith('has no __name__ attribute: you should provide an explicit `methodname`'))
         monkeypatch(MyClass, 'foo')(XXX())
-        self.assertTrue(isinstance(MyClass.prop1, property))
+        self.assertIsInstance(MyClass.prop1, property)
         self.assertTrue(callable(MyClass.foo))
         self.assertEqual(MyClass().prop1, 12)
         self.assertEqual(MyClass().foo(), 12)
@@ -177,9 +177,9 @@ class DecoratorsTC(TestCase):
 
         foo = Foo()
         self.assertEqual(Foo.x, 0)
-        self.failIf('bar' in foo.__dict__)
+        self.assertFalse('bar' in foo.__dict__)
         self.assertEqual(foo.bar, 1)
-        self.failUnless('bar' in foo.__dict__)
+        self.assertTrue('bar' in foo.__dict__)
         self.assertEqual(foo.bar, 1)
         self.assertEqual(foo.quux, 42)
         self.assertEqual(Foo.bar.__doc__,
