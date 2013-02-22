@@ -124,6 +124,21 @@ __unittest = 1
 def with_tempdir(callable):
     """A decorator ensuring no temporary file left when the function return
     Work only for temporary file create with the tempfile module"""
+    if is_generator(callable):
+        def proxy(*args, **kwargs):
+            old_tmpdir = tempfile.gettempdir()
+            new_tmpdir = tempfile.mkdtemp(prefix="temp-lgc-")
+            tempfile.tempdir = new_tmpdir
+            try:
+                for x in callable(*args, **kwargs):
+                    yield x
+            finally:
+                try:
+                    rmtree(new_tmpdir, ignore_errors=True)
+                finally:
+                    tempfile.tempdir = old_tmpdir
+        return proxy
+
     @wraps(callable)
     def proxy(*args, **kargs):
 

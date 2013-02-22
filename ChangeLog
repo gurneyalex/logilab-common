@@ -1,6 +1,8 @@
 ChangeLog for logilab.common
 ============================
 
+--
+    * testlib: check for generators in with_tempdir (closes #117533)
 
 2013-01-21  -- 0.59.0
 
