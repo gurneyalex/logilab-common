@@ -10,12 +10,12 @@
 %{!?_python_sitelib: %define _python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name:           %{python}-logilab-common
-Version:        0.58.2
+Version:        0.59.0
 Release:        logilab.1%{?dist}
 Summary:        Common libraries for Logilab projects
 
 Group:          Development/Libraries
-License:        GPLv2+
+License:        LGPLv2.1+
 URL:            http://www.logilab.org/projects/logilab-common
 Source0:        http://download.logilab.org/pub/common/logilab-common-%{version}.tar.gz
 BuildArch:      noarch

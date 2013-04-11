@@ -332,7 +332,8 @@ class Registry(dict):
         """return object with the `oid` identifier. Only one object is expected
         to be found.
 
-        raise :exc:`ObjectNotFound` if not object with id <oid> in <registry>
+        raise :exc:`ObjectNotFound` if there are no object with id `oid` in this
+        registry
 
         raise :exc:`AssertionError` if there is more than one object there
         """
@@ -344,9 +345,10 @@ class Registry(dict):
         """return the most specific object among those with the given oid
         according to the given context.
 
-        raise :exc:`ObjectNotFound` if not object with id <oid> in <registry>
+        raise :exc:`ObjectNotFound` if there are no object with id `oid` in this
+        registry
 
-        raise :exc:`NoSelectableObject` if not object apply
+        raise :exc:`NoSelectableObject` if no object can be selected
         """
         obj =  self._select_best(self[__oid], *args, **kwargs)
         if obj is None:
@@ -803,7 +805,7 @@ class RegistryStore(dict):
                         and getattr(obj, '__select__', None)):
                     return False
             elif issubclass(obj, RegistrableInstance):
- 		return False
+                return False
         elif not isinstance(obj, RegistrableInstance):
             return False
         if not obj.__regid__:

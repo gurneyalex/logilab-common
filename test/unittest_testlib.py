@@ -628,6 +628,17 @@ class DecoratorTC(TestCase):
         self.assertListEqual(list(os.walk(tempdir)),
             [(tempdir, [], [])])
 
+    def test_tmpdir_generator(self):
+        orig_tempdir = tempfile.gettempdir()
+
+        @with_tempdir
+        def gen():
+            yield tempfile.gettempdir()
+
+        for tempdir in gen():
+            self.assertNotEqual(orig_tempdir, tempdir)
+        self.assertEqual(orig_tempdir, tempfile.gettempdir())
+
     def setUp(self):
         self.pyversion = sys.version_info
 
