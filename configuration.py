@@ -394,7 +394,7 @@ def ini_format(stream, options, encoding):
 format_section = ini_format_section
 
 def rest_format_section(stream, section, options, encoding=None, doc=None):
-    """format an options section using the INI format"""
+    """format an options section using as ReST formatted output"""
     encoding = _get_encoding(encoding, stream)
     if section:
         print >> stream, '%s\n%s' % (section, "'"*len(section))
