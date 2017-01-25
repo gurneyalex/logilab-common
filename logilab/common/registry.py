@@ -704,6 +704,9 @@ class RegistryStore(dict):
         toload = []
         for modname in modnames:
             filepath = pkgutil.find_loader(modname).get_filename()
+            if filepath[-4:] in ('.pyc', '.pyo'):
+                # The source file *must* exists
+                filepath = filepath[:-1]
             self._toloadmods[modname] = filepath
             toload.append((filepath, modname))
         for filepath, modname in toload:
