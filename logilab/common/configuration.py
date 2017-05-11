@@ -949,8 +949,8 @@ class ConfigurationMixIn(OptionsManagerMixIn, OptionsProviderMixIn):
         options_by_group = {}
         for optname, optdict in options:
             options_by_group.setdefault(optdict.get('group', self.name.upper()), []).append((optname, optdict))
-        for group, options in options_by_group.items():
-            self.add_option_group(group, None, options, self)
+        for group, group_options in options_by_group.items():
+            self.add_option_group(group, None, group_options, self)
         self.options += tuple(options)
 
     def load_defaults(self):
