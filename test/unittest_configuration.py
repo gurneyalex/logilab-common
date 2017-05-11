@@ -469,6 +469,22 @@ class RegrTC(TestCase):
         self.linter.load_command_line_configuration([])
         self.assertEqual(self.linter.config.profile, False)
 
+    def test_register_options_multiple_groups(self):
+        """ensure multiple option groups can be registered at once"""
+        config = Configuration()
+        self.assertEqual(config.options, ())
+        new_options = (
+            ('option1', {'type': 'string', 'help': '',
+                         'group': 'g1', 'level': 2}),
+            ('option2', {'type': 'string', 'help': '',
+                         'group': 'g1', 'level': 2}),
+            ('option3', {'type': 'string', 'help': '',
+                         'group': 'g2', 'level': 2}),
+        )
+        config.register_options(new_options)
+        self.assertEqual(config.options, new_options)
+
+
 class MergeTC(TestCase):
 
     def test_merge1(self):
