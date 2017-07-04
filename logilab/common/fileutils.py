@@ -28,6 +28,7 @@ from __future__ import print_function
 
 __docformat__ = "restructuredtext en"
 
+import io
 import sys
 import shutil
 import mimetypes
@@ -282,7 +283,7 @@ def lines(path, comments=None):
 
     :warning: at some point this function will probably return an iterator
     """
-    stream = open(path, 'U')
+    stream = io.open(path)
     result = stream_lines(stream, comments)
     stream.close()
     return result
