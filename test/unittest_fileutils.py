@@ -18,6 +18,7 @@
 """unit tests for logilab.common.fileutils"""
 
 import doctest
+import io
 import sys, os, tempfile, shutil
 from stat import S_IWRITE
 from os.path import join
@@ -54,7 +55,7 @@ class GetModeTC(TestCase):
 
 class NormReadTC(TestCase):
     def test_known_values_norm_read(self):
-        data = open(NEWLINES_TXT, 'U').read()
+        data = io.open(NEWLINES_TXT).read()
         self.assertEqual(data.strip(), '\n'.join(['# mixed new lines', '1', '2', '3']))
 
 
