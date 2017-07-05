@@ -1045,7 +1045,7 @@ def read_old_config(newconfig, changes, configfile):
             option, oldtype, newvalue = action[1:]
             changesindex.setdefault(option, []).append((action[0], oldtype, newvalue))
             continue
-        if action[1] in ('added', 'removed'):
+        if action[0] in ('added', 'removed'):
             continue # nothing to do here
         raise Exception('unknown change %s' % action[0])
     # build a config object able to read the old config
