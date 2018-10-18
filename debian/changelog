@@ -1,3 +1,9 @@
+logilab-common (1.4.2-1) unstable; urgency=medium
+
+  * New upstream release
+
+ -- Philippe Pepiot <philippe.pepiot@logilab.fr>  Thu, 18 Oct 2018 10:42:33 +0200
+
 logilab-common (1.4.1-1) unstable; urgency=medium
 
   * New upstream release.
