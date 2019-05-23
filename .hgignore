@@ -9,3 +9,4 @@
 \,cover$
 ^\.coverage$
 ^.tox$
+doc/_build/
