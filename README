@@ -134,6 +134,29 @@ versions:
 * `sphinxutils`: we won't go that way imo (i == syt)
 
 
+Building the documentation
+--------------------------
+
+Create a virtualenv and install dependencies ::
+
+    virtualenv venv
+    source venv/bin/activate
+
+    # you need the krb5-config command to build all dependencies
+    # on debian you can get it using "apt-get install libkrb5-dev"
+
+    pip install doc/requirements-doc.txt
+
+    # install logilab-common
+    pip install -e .
+
+Then build the doc ::
+
+    cd doc
+    make html
+
+It's now available under `doc/_build/html/`
+
 Comments, support, bug reports
 ------------------------------
 
