@@ -24,7 +24,11 @@ Designed to ease:
 Installation
 ------------
 
-Extract the tarball, jump into the created directory and run ::
+logilab-common is available on pypi so you can install it using pip ::
+
+    pip install logilab-common
+
+Or alternatively extract the tarball, jump into the created directory and run ::
 
     python setup.py install
 
