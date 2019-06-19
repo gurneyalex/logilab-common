@@ -143,13 +143,13 @@ Comments, support, bug reports
 
 Project page https://www.logilab.org/project/logilab-common
 
-Use the python-projects at lists.logilab.org mailing list.
+Use the cubicweb-devel at lists.cubicweb.org mailing list.
 
 You can subscribe to this mailing list at
-https://lists.logilab.org/mailman/listinfo/python-projects
+https://lists.cubicweb.org/mailman/listinfo/cubicweb-devel
 
 Archives are available at
-https://lists.logilab.org/pipermail/python-projects/
+https://lists.cubicweb.org/pipermail/cubicweb-devel/
 
 
 .. _Sphinx: http://sphinx.pocoo.org/
