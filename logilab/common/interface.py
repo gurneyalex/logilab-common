@@ -18,11 +18,10 @@
 """Bases class for interfaces to provide 'light' interface handling.
 
  TODO:
-  _ implements a check method which check that an object implements the
-    interface
+  _ implements a check method which check that an object implements the interface
   _ Attribute objects
 
-  This module requires at least python 2.2
+This module requires at least python 2.2
 """
 __docformat__ = "restructuredtext en"
 

@@ -27,7 +27,7 @@ extension in the `optik_ext` module).
 Quick start: simplest usage
 ---------------------------
 
-.. python ::
+.. ::
 
   >>> import sys
   >>> from logilab.common.configuration import Configuration
