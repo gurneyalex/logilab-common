@@ -25,7 +25,8 @@ from six.moves import range
 
 class Table(object):
     """Table defines a data table with column and row names.
-    inv:
+    inv::
+
         len(self.data) <= len(self.row_names)
         forall(self.data, lambda x: len(x) <= len(self.col_names))
     """
@@ -175,7 +176,8 @@ class Table(object):
 
     def set_row(self, row_index, row_data):
         """sets the 'row_index' row
-        pre:
+        pre::
+
             type(row_data) == types.ListType
             len(row_data) == len(self.col_names)
         """
@@ -184,9 +186,11 @@ class Table(object):
 
     def set_row_by_id(self, row_id, row_data):
         """sets the 'row_id' column
-        pre:
+        pre::
+
             type(row_data) == types.ListType
             len(row_data) == len(self.row_names)
+
         Raises a KeyError if row_id is not found
         """
         try:
@@ -198,7 +202,8 @@ class Table(object):
 
     def append_row(self, row_data, row_name=None):
         """Appends a row to the table
-        pre:
+        pre::
+
             type(row_data) == types.ListType
             len(row_data) == len(self.col_names)
         """
@@ -211,7 +216,8 @@ class Table(object):
         """Appends row_data before 'index' in the table. To make 'insert'
         behave like 'list.insert', inserting in an out of range index will
         insert row_data to the end of the list
-        pre:
+        pre::
+
             type(row_data) == types.ListType
             len(row_data) == len(self.col_names)
         """
@@ -241,7 +247,8 @@ class Table(object):
 
     def set_column(self, col_index, col_data):
         """sets the 'col_index' column
-        pre:
+        pre::
+
             type(col_data) == types.ListType
             len(col_data) == len(self.row_names)
         """
@@ -252,9 +259,11 @@ class Table(object):
 
     def set_column_by_id(self, col_id, col_data):
         """sets the 'col_id' column
-        pre:
+        pre::
+
             type(col_data) == types.ListType
             len(col_data) == len(self.col_names)
+
         Raises a KeyError if col_id is not found
         """
         try:
@@ -266,7 +275,8 @@ class Table(object):
 
     def append_column(self, col_data, col_name):
         """Appends the 'col_index' column
-        pre:
+        pre::
+
             type(col_data) == types.ListType
             len(col_data) == len(self.row_names)
         """
@@ -279,7 +289,8 @@ class Table(object):
         """Appends col_data before 'index' in the table. To make 'insert'
         behave like 'list.insert', inserting in an out of range index will
         insert col_data to the end of the list
-        pre:
+        pre::
+
             type(col_data) == types.ListType
             len(col_data) == len(self.row_names)
         """
@@ -630,9 +641,12 @@ class TableStyleSheet:
     and col_index separated by an underscore ('_').
     For example, suppose you want to say that the (2,5) cell must be
     the sum of its two preceding cells in the row, you would create
-    the following rule :
+    the following rule ::
+
         2_5 = 2_3 + 2_4
-    You can also use all the math.* operations you want. For example:
+
+    You can also use all the math.* operations you want. For example::
+
         2_5 = sqrt(2_3**2 + 2_4**2)
     """
 
@@ -662,7 +676,8 @@ class TableStyleSheet:
         start_col to end_col.
         dest_cell is a tuple of two elements (x,y) of the destination cell
         No check is done for indexes ranges.
-        pre:
+        pre::
+
             start_col >= 0
             end_col > start_col
         """
@@ -677,7 +692,8 @@ class TableStyleSheet:
         to end_col)
         dest_cell is a tuple of two elements (x,y) of the destination cell
         No check is done for indexes ranges.
-        pre:
+        pre::
+
             start_col >= 0
             end_col > start_col
         """
@@ -693,7 +709,8 @@ class TableStyleSheet:
         start_row to end_row.
         dest_cell is a tuple of two elements (x,y) of the destination cell
         No check is done for indexes ranges.
-        pre:
+        pre::
+
             start_row >= 0
             end_row > start_row
         """
@@ -708,7 +725,8 @@ class TableStyleSheet:
         to end_row)
         dest_cell is a tuple of two elements (x,y) of the destination cell
         No check is done for indexes ranges.
-        pre:
+        pre::
+
             start_row >= 0
             end_row > start_row
         """
