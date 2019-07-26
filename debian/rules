@@ -29,13 +29,6 @@ build: build-indep
 %:
 	dh $@ --with python2,python3
 
-override_dh_auto_build:
-	dh_auto_build
-ifeq (,$(filter nodoc,$(DEB_BUILD_OPTIONS)))
-	python setup.py build --build-purelib build/lib
-	$(MAKE) -C doc
-endif
-
 override_dh_auto_install:
 	python setup.py install --no-compile \
 	                --root=$(CURDIR)/debian/$(PACKAGE)/ \
@@ -58,12 +51,6 @@ ifneq (,$(build_py3k))
 	gzip debian/$(PACKAGE3)/usr/share/man/man1/logilab-pytest3.1
 endif
 
-override_dh_installdocs:
-	dh_installdocs README*
-ifeq (,$(filter nodoc,$(DEB_BUILD_OPTIONS)))
-	dh_installdocs doc/apidoc/
-endif
-
 override_dh_auto_test:
 ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
 	python setup.py install \
@@ -79,9 +66,8 @@ endif
 endif
 
 override_dh_compress:
-	dh_compress -X.py -X.ini -X.xml -Xtest/ -Xapidoc/
+	dh_compress -X.py -X.ini -X.xml -Xtest/
 
 override_dh_clean:
 	dh_clean
-	rm -rf doc/apidoc
 	rm -rf logilab_common.egg-info

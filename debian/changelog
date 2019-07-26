@@ -1,6 +1,7 @@
 logilab-common (1.4.3-1) unstable; urgency=medium
 
   * new upstream release.
+  * drop documentation build
 
  -- Denis Laxalde <denis.laxalde@logilab.fr>  Fri, 26 Jul 2019 16:18:48 +0200
 
