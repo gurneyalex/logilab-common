@@ -14,7 +14,6 @@ Build-Depends:
  python3-all,
  python3-setuptools,
 Build-Depends-Indep:
- python-epydoc,
  graphviz,
  python-unittest2,
  python-egenix-mxdatetime,
