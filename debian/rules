@@ -46,7 +46,7 @@ ifneq (,$(build_py3k))
 	# rename logilab-pytest and its man page for python3k
 	mv debian/$(PACKAGE3)/usr/bin/logilab-pytest debian/$(PACKAGE3)/usr/bin/logilab-pytest3
 	sed -i 's/python -u/python3 -u/' debian/$(PACKAGE3)/usr/bin/logilab-pytest3
-	install -D doc/logilab-pytest.1 debian/$(PACKAGE3)/usr/share/man/man1/logilab-pytest3.1
+	install -D docs/logilab-pytest.1 debian/$(PACKAGE3)/usr/share/man/man1/logilab-pytest3.1
 	sed -i 's/logilab-pytest/logilab-pytest3/' debian/$(PACKAGE3)/usr/share/man/man1/logilab-pytest3.1
 	gzip debian/$(PACKAGE3)/usr/share/man/man1/logilab-pytest3.1
 endif
