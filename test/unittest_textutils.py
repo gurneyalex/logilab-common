@@ -190,6 +190,9 @@ class UnitsTC(TestCase):
         self.assertRaises(ValueError, tu.apply_units, 'wrong input', self.units)
         self.assertRaises(ValueError, tu.apply_units, 'wrong13 input', self.units)
         self.assertRaises(ValueError, tu.apply_units, 'wrong input42', self.units)
+        with self.assertRaises(ValueError) as cm:
+            tu.apply_units('42 cakes', self.units)
+        self.assertIn('invalid unit cakes.', str(cm.exception))
 
 RGX = re.compile('abcd')
 class PrettyMatchTC(TestCase):
